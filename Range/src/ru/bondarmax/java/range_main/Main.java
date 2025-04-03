@@ -1,6 +1,6 @@
-package ru.academits.java.bondar.range_main;
+package ru.bondarmax.java.range_main;
 
-import ru.academits.java.bondar.range.Range;
+import ru.bondarmax.java.range.Range;
 import java.util.Scanner;
 
 public class Main {
