@@ -33,25 +33,46 @@ public class Range {
         return from <= number && number <= to;
     }
 
-    public Range getSetsIntersection(Range range2) {
-        double range2StartPoint = range2.getFrom();
-        double range2EndPoint = range2.getTo();
+    public Range getSetsIntersection(Range range) {
+        double resultRangeStartPoint = this.getFrom();
+        double resultRangeEndPoint = this.getTo();
 
-        double resultRangeStartPoint = this.from;
-        double resultEndPoint = this.from;
+        if(this.isInside(range.getFrom())){
+            resultRangeStartPoint = range.getFrom();
+        }
 
-        boolean isStartInside =  isInside(range2StartPoint);
-        boolean isEndInside =  isInside(range2EndPoint);
+        if(this.isInside(range.getTo())){
+            resultRangeEndPoint = range.getTo();
+        }
 
-        if(!isStartInside || !isEndInside){
+
+
+       /* int resulRangeLength = 0;
+
+        int rangeLength = (int) (range.getLength());
+        int rangeNumber = (int) range.getFrom();
+        int i = 0;
+
+        for (; i <= rangeLength; rangeNumber++, i++) {
+            if (isInside(rangeNumber)) {
+                resultRangeStartPoint = rangeNumber;
+                resulRangeLength++;
+                break;
+            }
+        }
+
+        for (; i <= rangeLength; rangeNumber++, i++) {
+            if (isInside(rangeNumber)) {
+                resultRangeEndPoint = rangeNumber;
+                resulRangeLength++;
+            }
+        }
+
+        if (resulRangeLength <= 1) {
             return null;
-        }
+        }*/
 
-        if(this.from > resultRangeStartPoint){
-
-        }
-
-        return new Range(resultRangeStartPoint, resultEndPoint);
+        return new Range(resultRangeStartPoint, resultRangeEndPoint);
     }
 }
 
