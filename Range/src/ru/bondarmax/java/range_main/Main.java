@@ -31,14 +31,21 @@ public class Main {
         double startNumber = 2;
         double endNumber = 7;
 
-        Range range = new Range(1, 6);
+        Range range = new Range(4, 10);
 
-        Range range2 = new Range(3, 7);
+        Range range2 = new Range(2, 4);
 
-        Range range3 = range2.getSetsIntersection(range2);
+        Range range3 = range.getSetsIntersection(range2);
 
-        System.out.printf("Начало диапазона: %.2f%n", range3.getFrom());
-        System.out.printf("Конец диапазона: %.2f%n", range3.getTo());
+        if(range3!=null){
+            System.out.printf("Начало диапазона: %.2f%n", range3.getFrom());
+            System.out.printf("Конец диапазона: %.2f%n", range3.getTo());
+        }
+        else{
+            System.out.println("Нет пересечения");
+        }
+
+
 
     }
 }

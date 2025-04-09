@@ -34,45 +34,62 @@ public class Range {
     }
 
     public Range getSetsIntersection(Range range) {
-        double resultRangeStartPoint = this.getFrom();
-        double resultRangeEndPoint = this.getTo();
+        double resultRangeStartPoint = 0;
+        double resultRangeEndPoint = 0;
 
-        if(this.isInside(range.getFrom())){
-            resultRangeStartPoint = range.getFrom();
+        double rangeStartPoint = range.getFrom();
+        double rangeEndPoint = range.getTo();
+
+        double currentRangeStartPoint = this.getFrom();
+        double currentRangeEndPoint = this.getTo();
+
+        if (this.isInside(rangeStartPoint)) {
+            resultRangeStartPoint = rangeStartPoint;
+        } else if (range.isInside(currentRangeStartPoint)) {
+            resultRangeStartPoint = currentRangeStartPoint;
         }
 
-        if(this.isInside(range.getTo())){
-            resultRangeEndPoint = range.getTo();
+        if (this.isInside(rangeEndPoint)) {
+            resultRangeEndPoint = rangeEndPoint;
+        } else if (range.isInside(currentRangeEndPoint)) {
+            resultRangeEndPoint = currentRangeEndPoint;
         }
 
-
-
-       /* int resulRangeLength = 0;
-
-        int rangeLength = (int) (range.getLength());
-        int rangeNumber = (int) range.getFrom();
-        int i = 0;
-
-        for (; i <= rangeLength; rangeNumber++, i++) {
-            if (isInside(rangeNumber)) {
-                resultRangeStartPoint = rangeNumber;
-                resulRangeLength++;
-                break;
-            }
-        }
-
-        for (; i <= rangeLength; rangeNumber++, i++) {
-            if (isInside(rangeNumber)) {
-                resultRangeEndPoint = rangeNumber;
-                resulRangeLength++;
-            }
-        }
-
-        if (resulRangeLength <= 1) {
+        if ((resultRangeEndPoint - resultRangeStartPoint) < 1)
             return null;
-        }*/
 
         return new Range(resultRangeStartPoint, resultRangeEndPoint);
+    }
+
+    public Range getSetsUnion(Range range) {
+        double resultRangeStartPoint = 0;
+        double resultRangeEndPoint = 0;
+
+        double rangeStartPoint = range.getFrom();
+        double rangeEndPoint = range.getTo();
+
+        double currentRangeStartPoint = this.getFrom();
+        double currentRangeEndPoint = this.getTo();
+
+        if(this.isInside(rangeStartPoint) && this.isInside(rangeEndPoint)) {
+            resultRangeStartPoint = currentRangeStartPoint;
+            resultRangeEndPoint = currentRangeEndPoint;
+        } else if(range.isInside(currentRangeStartPoint) && range.isInside(currentRangeEndPoint)){
+            resultRangeStartPoint = rangeStartPoint;
+            resultRangeEndPoint = rangeEndPoint;
+        }
+
+        if(this.isInside(rangeStartPoint)){
+            resultRangeStartPoint = currentRangeStartPoint;
+            resultRangeEndPoint = rangeEndPoint;
+        }
+
+        if(this.isInside(rangeEndPoint)){
+            resultRangeStartPoint = rangeStartPoint;
+            resultRangeEndPoint = currentRangeEndPoint;
+        }
+
+        return null;
     }
 }
 
