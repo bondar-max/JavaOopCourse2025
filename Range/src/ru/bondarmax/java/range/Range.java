@@ -61,35 +61,33 @@ public class Range {
         return new Range(resultRangeStartPoint, resultRangeEndPoint);
     }
 
-    public Range getSetsUnion(Range range) {
-        double resultRangeStartPoint = 0;
-        double resultRangeEndPoint = 0;
-
+    public Range[] getSetsUnion(Range range) {
         double rangeStartPoint = range.getFrom();
         double rangeEndPoint = range.getTo();
 
-        double currentRangeStartPoint = this.getFrom();
-        double currentRangeEndPoint = this.getTo();
+        double thisRangeStartPoint = this.getFrom();
+        double thisRangeEndPoint = this.getTo();
 
-        if(this.isInside(rangeStartPoint) && this.isInside(rangeEndPoint)) {
-            resultRangeStartPoint = currentRangeStartPoint;
-            resultRangeEndPoint = currentRangeEndPoint;
-        } else if(range.isInside(currentRangeStartPoint) && range.isInside(currentRangeEndPoint)){
-            resultRangeStartPoint = rangeStartPoint;
-            resultRangeEndPoint = rangeEndPoint;
+        if (this.isInside(rangeStartPoint) && this.isInside(rangeEndPoint)) {
+            return getNewRange(thisRangeStartPoint, thisRangeEndPoint);
+        } else if (range.isInside(thisRangeStartPoint) && range.isInside(thisRangeEndPoint)) {
+            return getNewRange(rangeStartPoint, rangeEndPoint);
+        } else if (this.isInside(rangeStartPoint) || range.isInside(thisRangeEndPoint)) {
+            return getNewRange(thisRangeStartPoint, rangeEndPoint);
+        } else if (this.isInside(rangeEndPoint) || range.isInside(thisRangeStartPoint)) {
+            return getNewRange(rangeStartPoint, thisRangeEndPoint);
+        } else {
+            return new Range[]{range, this};
         }
-
-        if(this.isInside(rangeStartPoint)){
-            resultRangeStartPoint = currentRangeStartPoint;
-            resultRangeEndPoint = rangeEndPoint;
-        }
-
-        if(this.isInside(rangeEndPoint)){
-            resultRangeStartPoint = rangeStartPoint;
-            resultRangeEndPoint = currentRangeEndPoint;
-        }
-
-        return null;
     }
+
+    private Range[] getNewRange(double startPoint, double endPoint) {
+        return new Range[]{new Range(startPoint, endPoint)};
+    }
+
+    /*public Range[] getSetsDifference(Range range) {
+
+        return
+    }*/
 }
 

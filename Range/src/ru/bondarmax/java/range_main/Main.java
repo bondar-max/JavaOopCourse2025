@@ -1,6 +1,7 @@
 package ru.bondarmax.java.range_main;
 
 import ru.bondarmax.java.range.Range;
+
 import java.util.Scanner;
 
 public class Main {
@@ -28,14 +29,11 @@ public class Main {
             System.out.println("Число вне диапазона");
         }*/
 
-        double startNumber = 2;
-        double endNumber = 7;
+        Range range = new Range(2, 12);
 
-        Range range = new Range(4, 10);
+        Range range2 = new Range(11, 15);
 
-        Range range2 = new Range(2, 4);
-
-        Range range3 = range.getSetsIntersection(range2);
+        /*Range range3 = range.getSetsIntersection(range2);
 
         if(range3!=null){
             System.out.printf("Начало диапазона: %.2f%n", range3.getFrom());
@@ -43,9 +41,16 @@ public class Main {
         }
         else{
             System.out.println("Нет пересечения");
+        }*/
+
+        Range[] resultRanges = range2.getSetsUnion(range);
+
+        for (int i = 0; i < resultRanges.length; i++) {
+            System.out.printf("Начало диапазона%d: %.2f%n", i + 1, resultRanges[i].getFrom());
+            System.out.printf("Конец диапазона%d: %.2f%n", i + 1, resultRanges[i].getTo());
+
+            System.out.println();
         }
-
-
 
     }
 }
