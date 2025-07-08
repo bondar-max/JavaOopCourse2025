@@ -29,9 +29,9 @@ public class Main {
             System.out.println("Число вне диапазона");
         }*/
 
-        Range range = new Range(2, 12);
+        Range range = new Range(2, 11);
 
-        Range range2 = new Range(11, 15);
+        Range range2 = new Range(13, 15);
 
         /*Range range3 = range.getSetsIntersection(range2);
 

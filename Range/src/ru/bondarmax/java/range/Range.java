@@ -86,8 +86,20 @@ public class Range {
     }
 
     /*public Range[] getSetsDifference(Range range) {
+        double rangeStartPoint = range.getFrom();
+        double rangeEndPoint = range.getTo();
 
-        return
+        double thisRangeStartPoint = this.getFrom();
+        double thisRangeEndPoint = this.getTo();
+
+
+        if ((thisRangeStartPoint == rangeStartPoint) && (thisRangeEndPoint == rangeEndPoint) {
+            return null;
+        }
+        else if (!this.isInside(rangeStartPoint) && !this.isInside(rangeEndPoint)) {
+            return 
+        }
     }*/
 }
+
 
