@@ -29,11 +29,11 @@ public class Main {
             System.out.println("Число вне диапазона");
         }*/
 
-        Range range = new Range(2, 11);
+        Range range = new Range(1, 10);
 
-        Range range2 = new Range(13, 15);
+        Range range2 = new Range(4, 8);
 
-        /*Range range3 = range.getSetsIntersection(range2);
+        Range range3 = range.getSetsIntersection(range2);
 
         if(range3!=null){
             System.out.printf("Начало диапазона: %.2f%n", range3.getFrom());
@@ -41,16 +41,16 @@ public class Main {
         }
         else{
             System.out.println("Нет пересечения");
-        }*/
+        }
 
-        Range[] resultRanges = range2.getSetsUnion(range);
+        /*Range[] resultRanges = range.getSetsDifference(range2);
 
         for (int i = 0; i < resultRanges.length; i++) {
             System.out.printf("Начало диапазона%d: %.2f%n", i + 1, resultRanges[i].getFrom());
             System.out.printf("Конец диапазона%d: %.2f%n", i + 1, resultRanges[i].getTo());
 
             System.out.println();
-        }
+        }*/
 
     }
 }
