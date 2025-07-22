@@ -1,4 +1,4 @@
-package ru.bondarmax.java.range;
+package ru.java.bondarmax.range;
 
 public class Range {
     private double from;
