@@ -26,11 +26,12 @@ public class Main {
         Shape maxAreaShape = shapes[shapes.length - 1];
         System.out.println("Фигура с максимальной площадью: " + maxAreaShape);
         System.out.println("Площадь: " + maxAreaShape.getArea());
+        System.out.println();
 
         // Находим фигуру со вторым по величине периметром
         Arrays.sort(shapes, Comparator.comparingDouble(Shape::getPerimeter));
         Shape secondMaxPerimeterShape = shapes[shapes.length - 2];
-        System.out.println("\nФигура со вторым по величине периметром: " + secondMaxPerimeterShape);
+        System.out.println("Фигура со вторым по величине периметром: " + secondMaxPerimeterShape);
         System.out.println("Периметр: " + secondMaxPerimeterShape.getPerimeter());
     }
 }
