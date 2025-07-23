@@ -33,54 +33,59 @@ public class Range {
         return from <= number && number <= to;
     }
 
-    public Range getIntersection(Range otherRange) {
-        // Проверяем отсутствие пересечения или пересечение по краю
-        if (to <= otherRange.from || from >= otherRange.to) {
+    public Range getIntersection(Range range) {
+        // Вычисляем границы пересечения
+        double newFrom = Math.max(from, range.from);
+        double newTo = Math.min(to, range.to);
+
+        // Проверяем отсутствие пересечения или пересечение только по границе
+        if (newFrom >= newTo) {
             return null;
         }
-
-        // Вычисляем границы пересечения
-        double newFrom = Math.max(from, otherRange.from);
-        double newTo = Math.min(to, otherRange.to);
 
         return new Range(newFrom, newTo);
     }
 
-    public Range[] getUnion(Range otherRange) {
+    public Range[] getUnion(Range range) {
         // Если интервалы не пересекаются и не соприкасаются
-        if (to < otherRange.from || from > otherRange.to)
-            return new Range[]{new Range(from, to), new Range(otherRange.from, otherRange.to)};
+        if (to < range.from || from > range.to) {
+            return new Range[]{new Range(from, to), new Range(range.from, range.to)};
+        }
 
         // Если интервалы пересекаются или один содержит другой
-        double newFrom = Math.min(from, otherRange.from);
-        double newTo = Math.max(to, otherRange.to);
+        double newFrom = Math.min(from, range.from);
+        double newTo = Math.max(to, range.to);
 
         return new Range[]{new Range(newFrom, newTo)};
     }
 
-    public Range[] getDifference(Range otherRange) {
+    public Range[] getDifference(Range range) {
         // Если интервалы не пересекаются или пересекаются только по краю
-        if (to <= otherRange.from || from >= otherRange.to) {
+        if (to <= range.from || from >= range.to) {
             return new Range[]{new Range(from, to)};
         }
 
-        // Если один интервал полностью содержит другой
-        if (from <= otherRange.from && to >= otherRange.to)
-            return new Range[]{new Range(from, otherRange.from), new Range(otherRange.to, to)};
+        // Проверяем полное включение
+        if (from >= range.from && to <= range.to) {
+            return new Range[0];
+        }
+
+        // Если один интервал содержит другой
+        if (from < range.from && to > range.to) {
+            return new Range[]{new Range(from, range.from), new Range(range.to, to)};
+        }
 
         // Если интервалы пересекаются частично
-        if (from < otherRange.from && to > otherRange.from)
-            return new Range[]{new Range(from, otherRange.from)};
+        if (from < range.from) {
+            return new Range[]{new Range(from, range.from)};
+        }
 
-        if (from >= otherRange.from && from < otherRange.to && to > otherRange.to)
-            return new Range[]{new Range(otherRange.to, to)};
-
-        return new Range[0]; // Пустой результат
+        return new Range[]{new Range(range.to, to)}; // Пустой результат
     }
 
-    public void printInformation() {
-        System.out.printf("%nНачало диапазона: %.2f%n", this.getFrom());
-        System.out.printf("Конец диапазона: %.2f%n", this.getTo());
-        System.out.printf("Длина диапазона: %.2f%n%n", this.getLength());
+    public void print() {
+        System.out.printf("%nНачало диапазона: %.2f%n", from);
+        System.out.printf("Конец диапазона: %.2f%n", to);
+        System.out.printf("Длина диапазона: %.2f%n%n", getLength());
     }
 }

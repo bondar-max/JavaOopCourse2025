@@ -16,7 +16,7 @@ public class Main {
 
         Range range1 = new Range(startNumber1, endNumber1);
 
-        range1.printInformation();
+        range1.print();
 
         System.out.println("Введите число и узнайте принадлежит ли оно диапазону:");
         double number = scanner.nextDouble();
@@ -33,7 +33,7 @@ public class Main {
         System.out.println("Измените конец диапазона1:");
         range1.setTo(scanner.nextDouble());
 
-        range1.printInformation();
+        range1.print();
 
         System.out.println("Введите начало диапазона2:");
         double startNumber2 = scanner.nextDouble();
@@ -43,37 +43,40 @@ public class Main {
 
         Range range2 = new Range(startNumber2, endNumber2);
 
-        System.out.printf("%nПересечение%n");
+        Range intersection = range1.getIntersection(range2);
 
-        Range intersectionResult = range1.getIntersection(range2);
-
-        if (intersectionResult != null) {
-            System.out.printf("Начало диапазона: %.2f%n", intersectionResult.getFrom());
-            System.out.printf("Конец диапазона: %.2f%n", intersectionResult.getTo());
+        if (intersection == null) {
+            System.out.printf("Нет пересечения%n");
+        } else {
+            System.out.printf("%nПересечение%nНачало диапазона: %.2f%n", intersection.getFrom());
+            System.out.printf("Конец диапазона: %.2f%n", intersection.getTo());
 
             System.out.println();
-        } else {
-            System.out.println("Нет пересечения\n");
         }
 
         System.out.println("Объединение");
 
-        Range[] unionResult = range1.getUnion(range2);
+        Range[] union = range1.getUnion(range2);
 
-        for (int i = 0; i < unionResult.length; i++) {
-            System.out.printf("Начало диапазона%d: %.2f%n", i + 1, unionResult[i].getFrom());
-            System.out.printf("Конец диапазона%d: %.2f%n", i + 1, unionResult[i].getTo());
+        for (int i = 0; i < union.length; i++) {
+            System.out.printf("Начало диапазона%d: %.2f%n", i + 1, union[i].getFrom());
+            System.out.printf("Конец диапазона%d: %.2f%n", i + 1, union[i].getTo());
 
             System.out.println();
         }
 
-        System.out.println("Разность");
+        System.out.print("Разность");
 
-        Range[] differenceResult = range1.getDifference(range2);
+        Range[] difference = range1.getDifference(range2);
 
-        for (int i = 0; i < differenceResult.length; i++) {
-            System.out.printf("Начало диапазона%d: %.2f%n", i + 1, differenceResult[i].getFrom());
-            System.out.printf("Конец диапазона%d: %.2f%n", i + 1, differenceResult[i].getTo());
+        if (difference.length == 0) {
+            System.out.println(" = 0");
+            return;
+        }
+
+        for (int i = 0; i < difference.length; i++) {
+            System.out.printf("%nНачало диапазона%d: %.2f%n", i + 1, difference[i].getFrom());
+            System.out.printf("Конец диапазона%d: %.2f", i + 1, difference[i].getTo());
 
             System.out.println();
         }
