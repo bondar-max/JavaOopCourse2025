@@ -9,43 +9,43 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Введите начало диапазона1:");
-        double startNumber = scanner.nextDouble();
+        double startNumber1 = scanner.nextDouble();
 
         System.out.println("Введите конец диапазона1:");
-        double endNumber = scanner.nextDouble();
+        double endNumber1 = scanner.nextDouble();
 
-        Range range = new Range(startNumber, endNumber);
+        Range range1 = new Range(startNumber1, endNumber1);
 
-        range.printInformation();
+        range1.printInformation();
 
         System.out.println("Введите число и узнайте принадлежит ли оно диапазону:");
         double number = scanner.nextDouble();
 
-        if (range.isInside(number)) {
+        if (range1.isInside(number)) {
             System.out.println("Число внутри диапазона");
         } else {
             System.out.println("Число вне диапазона");
         }
 
         System.out.printf("%nИзмените начало диапазона1:%n");
-        range.setFrom(scanner.nextDouble());
+        range1.setFrom(scanner.nextDouble());
 
         System.out.println("Измените конец диапазона1:");
-        range.setTo(scanner.nextDouble());
+        range1.setTo(scanner.nextDouble());
 
-        range.printInformation();
+        range1.printInformation();
 
         System.out.println("Введите начало диапазона2:");
-        startNumber = scanner.nextDouble();
+        double startNumber2 = scanner.nextDouble();
 
         System.out.println("Введите конец диапазона2:");
-        endNumber = scanner.nextDouble();
+        double endNumber2 = scanner.nextDouble();
 
-        Range range2 = new Range(startNumber, endNumber);
+        Range range2 = new Range(startNumber2, endNumber2);
 
         System.out.printf("%nПересечение%n");
 
-        Range intersectionResult = range.getSetsIntersection(range2);
+        Range intersectionResult = range1.getIntersection(range2);
 
         if (intersectionResult != null) {
             System.out.printf("Начало диапазона: %.2f%n", intersectionResult.getFrom());
@@ -53,12 +53,12 @@ public class Main {
 
             System.out.println();
         } else {
-            System.out.println("Нет пересечения");
+            System.out.println("Нет пересечения\n");
         }
 
         System.out.println("Объединение");
 
-        Range[] unionResult = range.getSetsUnion(range2);
+        Range[] unionResult = range1.getUnion(range2);
 
         for (int i = 0; i < unionResult.length; i++) {
             System.out.printf("Начало диапазона%d: %.2f%n", i + 1, unionResult[i].getFrom());
@@ -69,7 +69,7 @@ public class Main {
 
         System.out.println("Разность");
 
-        Range[] differenceResult = range.getSetsDifference(range2);
+        Range[] differenceResult = range1.getDifference(range2);
 
         for (int i = 0; i < differenceResult.length; i++) {
             System.out.printf("Начало диапазона%d: %.2f%n", i + 1, differenceResult[i].getFrom());
