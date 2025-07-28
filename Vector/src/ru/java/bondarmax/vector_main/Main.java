@@ -11,50 +11,35 @@ public class Main {
             Vector v3 = new Vector(5, new double[]{4, 5});
             Vector v4 = new Vector(v3);
 
-            System.out.println("v1: " + v1);
-            System.out.println("размер вектора v1: " + v1.getSize());
-            System.out.println();
+            System.out.printf("Вектор v1: %s%nРазмер вектора v1: %d%n%n", v1, v1.getSize());
 
-            System.out.println("v2: " + v2);
-            System.out.println("размер вектора v2: " + v2.getSize());
-            System.out.println();
+            System.out.printf("Вектор v2: %s%nРазмер вектора v2: %d%n%n", v2, v2.getSize());
 
-            System.out.println("v3: " + v3);
-            System.out.println("размер вектора v3: " + v3.getSize());
-            System.out.println();
+            System.out.printf("Вектор v3: %s%nРазмер вектора v3: %d%n%n", v3, v3.getSize());
 
-            System.out.println("v4: " + v4);
-            System.out.println("размер вектора v4: " + v4.getSize());
-            System.out.println();
+            System.out.printf("Вектор v4: %s%nРазмер вектора v4: %d%n%n", v4, v4.getSize());
 
             v4.setComponent(2,6);
-            System.out.println("v4 после установки по индексу: " + v4);
-            System.out.println();
+            System.out.printf("Вектор v4 после установки по индексу: %s%n%n", v4);
 
-            System.out.println("компонент 1 вектора v3: " + v2.getComponent(1));
-            System.out.println();
+            System.out.printf("Компонент 1 вектора v3: : %s%n%n", v3.getComponent(1));
 
             v4.subtract(v3);
-            System.out.println("v4 после вычитания v3: " + v4);
-            System.out.println();
+            System.out.printf("Вектор v4 после вычитания v3: %s%n%n", v4);
 
             v1.add(v2);
-            System.out.println("v1 после добавления v2: " + v1);
-            System.out.println();
+            System.out.printf("Вектор v1 после добавления v2: %s%n%n", v1);
 
             Vector sum = Vector.add(v1, v3);
-            System.out.println("Сумма v1 и v3: " + sum);
-            System.out.println();
+            System.out.printf("Сумма v1 и v3: %s%n%n", sum);
 
-            System.out.println("Скалярное произведение v1 и v2: " + Vector.dotProduct(v1, v2));
-            System.out.println();
+            double dotProduct = Vector.dotProduct(v1, v2);
+            System.out.printf("Скалярное произведение v1 и v2: %.2f%n%n", dotProduct);
 
-            System.out.println("Длина v2: " + v2.length());
-            System.out.println();
+            System.out.printf("Длина вектора v2: %.2f%n%n", v2.length());
 
             v2.reverse();
-            System.out.println("v2 после разворота: " + v2);
-            System.out.println();
+            System.out.printf("Вектор v2 после разворота: %s%n%n", v2);
 
             Vector diff = Vector.subtract(v3, v1);
             System.out.println("Разность v3 и v1: " + diff);

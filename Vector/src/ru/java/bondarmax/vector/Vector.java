@@ -11,6 +11,7 @@ public class Vector {
         if (n <= 0) {
             throw new IllegalArgumentException("Размерность вектора должна быть положительной");
         }
+
         size = n;
         components = new double[n];
     }
@@ -32,6 +33,7 @@ public class Vector {
         if (n <= 0) {
             throw new IllegalArgumentException("Размерность вектора должна быть положительной");
         }
+
         size = n;
         components = new double[size];
         System.arraycopy(values, 0, components, 0, Math.min(values.length, size));
@@ -47,6 +49,7 @@ public class Vector {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Индекс выходит за пределы вектора");
         }
+
         return components[index];
     }
 
@@ -55,6 +58,7 @@ public class Vector {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Индекс выходит за пределы вектора");
         }
+
         components[index] = value;
     }
 
@@ -103,23 +107,47 @@ public class Vector {
     // Длина вектора
     public double length() {
         double sum = 0;
+
         for (double comp : components) {
             sum += comp * comp;
         }
+
         return Math.sqrt(sum);
     }
 
     @Override
     public String toString() {
-        return "{" + Arrays.toString(components).replace(" ", "") + "}";
+        if (size == 0) return "{}";
+
+        StringBuilder result = new StringBuilder("{");
+
+        for (int i = 0; i < size; i++) {
+            result.append(components[i]);
+            if (i < size - 1) {
+                result.append(", ");
+            }
+        }
+
+        result.append("}");
+        return result.toString();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj){
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()){
+            return false;
+        }
+
         Vector other = (Vector) obj;
-        if (size != other.size) return false;
+
+        if (size != other.size){
+            return false;
+        }
+
         return Arrays.equals(components, other.components);
     }
 
@@ -130,8 +158,7 @@ public class Vector {
         return result;
     }
 
-    // Продолжение реализации статических методов
-
+    // Реализация статических методов
     public static Vector add(Vector v1, Vector v2) {
         int maxSize = Math.max(v1.size, v2.size);
         double[] result = new double[maxSize];
