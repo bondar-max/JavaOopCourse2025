@@ -2,22 +2,30 @@ package ru.java.bondarmax.shapes;
 
 // Класс для прямоугольника
 public class Rectangle implements Shape {
-    private final double width;
-    private final double height;
+    private double width;
+    private double height;
 
     public Rectangle(double width, double height) {
         this.width = width;
         this.height = height;
     }
 
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
     @Override
     public double getWidth() {
-        return this.width;
+        return width;
     }
 
     @Override
     public double getHeight() {
-        return this.height;
+        return height;
     }
 
     @Override
@@ -39,17 +47,25 @@ public class Rectangle implements Shape {
     public int hashCode() {
         final int prime = 37;
         int hash = 1;
+
         hash = prime * hash + Double.hashCode(width);
         hash = prime * hash + Double.hashCode(height);
+
         return hash;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         Rectangle rectangle = (Rectangle) o;
-        return Double.compare(rectangle.width, getWidth()) == 0 &&
-                Double.compare(rectangle.height, getHeight()) == 0;
+
+        return rectangle.width == getWidth() && rectangle.height == getHeight();
     }
 }

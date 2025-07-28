@@ -2,22 +2,32 @@ package ru.java.bondarmax.shapes;
 
 // Класс для окружности
 public class Circle implements Shape {
-    private final double radius;
-    private final double diameter;
+    private double radius;
 
     public Circle(double radius) {
         this.radius = radius;
-        diameter = 2 * radius;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
+    public double getDiameter() {
+        return 2 * radius;
     }
 
     @Override
     public double getWidth() {
-        return diameter;
+        return getDiameter();
     }
 
     @Override
     public double getHeight() {
-        return diameter;
+        return getDiameter();
     }
 
     @Override
@@ -39,15 +49,24 @@ public class Circle implements Shape {
     public int hashCode() {
         final int prime = 37;
         int hash = 1;
+
         hash = prime * hash + Double.hashCode(radius);
+
         return hash;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         Circle circle = (Circle) o;
-        return Double.compare(circle.radius, radius) == 0;
+
+        return circle.radius == radius;
     }
 }
