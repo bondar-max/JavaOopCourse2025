@@ -19,7 +19,7 @@ public class Main {
 
             System.out.printf("Вектор v4: %s%nРазмер вектора v4: %d%n%n", v4, v4.getSize());
 
-            v4.setComponent(2,6);
+            v4.setComponent(2, 6);
             System.out.printf("Вектор v4 после установки по индексу: %s%n%n", v4);
 
             System.out.printf("Компонент 1 вектора v3: : %s%n%n", v3.getComponent(1));

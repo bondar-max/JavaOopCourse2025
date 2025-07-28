@@ -134,17 +134,17 @@ public class Vector {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj){
+        if (this == obj) {
             return true;
         }
 
-        if (obj == null || getClass() != obj.getClass()){
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
 
         Vector other = (Vector) obj;
 
-        if (size != other.size){
+        if (size != other.size) {
             return false;
         }
 
