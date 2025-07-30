@@ -8,10 +8,10 @@ public class Matrix {
     private final int columnsCount;
 
 
-    // Конструкторы
+    // Конструктор матрицы размера n x m, заполненной нулями
     public Matrix(int n, int m) {
         rowsCount = n;
-        columnsCount = m;
+        this.columnsCount = m;
         rows = new Vector[n];
 
         for (int i = 0; i < n; i++) {
@@ -19,9 +19,10 @@ public class Matrix {
         }
     }
 
+    // Конструктор копирования
     public Matrix(Matrix other) {
         rowsCount = other.rowsCount;
-        columnsCount = other.columnsCount;
+        this.columnsCount = other.columnsCount;
         rows = new Vector[rowsCount];
 
         for (int i = 0; i < rowsCount; i++) {
@@ -29,26 +30,34 @@ public class Matrix {
         }
     }
 
+    // Конструктор из двумерного массива
     public Matrix(double[][] array) {
         rowsCount = array.length;
-        columnsCount = array[0].length;
+        this.columnsCount = array[0].length;
         rows = new Vector[rowsCount];
 
         for (int i = 0; i < rowsCount; i++) {
             rows[i] = new Vector(array[i]);
 
             // Дополняем нулями если нужно
-            if (rows[i].getSize() < columnsCount) {
-                double[] temp = new double[columnsCount];
+            if (rows[i].getSize() < this.columnsCount) {
+                double[] temp = new double[this.columnsCount];
                 System.arraycopy(array[i], 0, temp, 0, array[i].length);
                 rows[i] = new Vector(temp);
             }
         }
     }
 
+    // Конструктор из массива векторов
     public Matrix(Vector[] vectors) {
+        int columnsCount = 0;
+
+        for (Vector v : vectors) {
+            columnsCount = Math.max(columnsCount, v.getSize());
+        }
+
         rowsCount = vectors.length;
-        columnsCount = vectors[0].getSize();
+        this.columnsCount = columnsCount;
         rows = new Vector[rowsCount];
 
         for (int i = 0; i < rowsCount; i++) {
@@ -62,49 +71,24 @@ public class Matrix {
         }
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        // Определяем максимальную ширину числа для выравнивания
-        int maxWidth = getMaxWidth();
-
-        sb.append(System.lineSeparator());
-
-        for (int i = 0; i < rowsCount; i++) {
-            sb.append("  ");
-
-            for (int j = 0; j < columnsCount; j++) {
-                String value = String.valueOf(rows[i].getComponent(j));
-
-                // Добавляем пробелы для выравнивания
-                sb.append(value);
-                sb.append(" ".repeat(maxWidth - value.length()));
-
-                if (j < columnsCount - 1) {
-                    sb.append("  ");  // добавляем пробелы между элементами
-                }
-            }
-
-            sb.append(System.lineSeparator());  // используем универсальный перенос строки
-        }
-
-        return sb.toString();
+    public int getRowsCount() {
+        return rowsCount;
     }
 
-    private int getMaxWidth() {
-        int max = 0;
+    public int getColumnsCount() {
+        return this.columnsCount;
+    }
 
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder("{");
         for (int i = 0; i < rowsCount; i++) {
-            for (int j = 0; j < columnsCount; j++) {
-                String value = String.valueOf(rows[i].getComponent(j));
-
-                if (value.length() > max) {
-                    max = value.length();
-                }
+            result.append(rows[i].toString());
+            if (i < rowsCount - 1) {
+                result.append(", ");
             }
         }
-
-        return max + 2;  // добавляем 2 для отступов
+        result.append("}");
+        return result.toString();
     }
 }
