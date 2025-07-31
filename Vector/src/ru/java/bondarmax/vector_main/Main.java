@@ -36,7 +36,7 @@ public class Main {
             double dotProduct = Vector.dotProduct(v1, v2);
             System.out.printf("Скалярное произведение v1 и v2: %.2f%n%n", dotProduct);
 
-            System.out.printf("Длина вектора v2: %.2f%n%n", v2.length());
+            System.out.printf("Длина вектора v2: %.2f%n%n", v2.getLength());
 
             v2.reverse();
             System.out.printf("Вектор v2 после разворота: %s%n%n", v2);
