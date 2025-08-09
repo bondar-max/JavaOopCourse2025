@@ -66,7 +66,7 @@ public class Triangle implements Shape {
         this.y3 = y3;
     }
 
-    private double calculateSegmentLength(double x1, double y1, double x2, double y2) {
+    public static double calculateSegmentLength(double x1, double y1, double x2, double y2) {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
@@ -104,7 +104,7 @@ public class Triangle implements Shape {
 
     @Override
     public String toString() {
-        return "Треугольник [высота=" + getHeight() + " " + "ширина=" + getWidth() + "]";
+        return "Треугольник [высота=" + getHeight() + " ширина=" + getWidth() + "]";
     }
 
     @Override
@@ -127,6 +127,7 @@ public class Triangle implements Shape {
         if (this == o) {
             return true;
         }
+
         if (o == null || getClass() != o.getClass()) {
             return false;
         }

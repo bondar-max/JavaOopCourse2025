@@ -2,7 +2,7 @@ package ru.java.bondarmax.shapes_main;
 
 import java.util.Arrays;
 
-import ru.java.bondarmax.comparators.*;
+import ru.java.bondarmax.shapes_comparators.*;
 import ru.java.bondarmax.shapes.*;
 
 public class Main {
@@ -43,7 +43,7 @@ public class Main {
                 new Triangle(3, 1, 5, 1, 8, 10),
                 new Rectangle(8, 8),
                 new Circle(4),
-                new Triangle(3, 1, 5, 1, 8, 10),
+                new Triangle(3, 1, 5, 1, 7, 10),
                 new Rectangle(12, 3),
                 new Circle(2),
                 new Triangle(1, 1, 12, 1, 8, 10),
@@ -51,16 +51,15 @@ public class Main {
                 new Rectangle(7, 7)
         };
 
-
         // Находим фигуру с максимальной площадью
-        Arrays.sort(shapes, new AreaComparator());
+        Arrays.sort(shapes, new ShapeAreaComparator());
         Shape maxAreaShape = shapes[shapes.length - 1];
         System.out.println("Фигура с максимальной площадью: " + maxAreaShape);
         System.out.println("Площадь: " + maxAreaShape.getArea());
         System.out.println();
 
         // Находим фигуру со вторым по величине периметром
-        Arrays.sort(shapes, new PerimeterComparator());
+        Arrays.sort(shapes, new ShapePerimeterComparator());
         Shape secondMaxPerimeterShape = shapes[shapes.length - 2];
         System.out.println("Фигура со вторым по величине периметром: " + secondMaxPerimeterShape);
         System.out.println("Периметр: " + secondMaxPerimeterShape.getPerimeter());
