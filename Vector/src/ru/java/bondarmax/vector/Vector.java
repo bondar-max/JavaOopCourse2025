@@ -22,10 +22,11 @@ public class Vector {
     // Конструктор с массивом значений
     public Vector(double[] values) {
         if (values == null) {
-            throw new NullPointerException("Массив значений не может быть null");
+            throw new NullPointerException("Массив значений не может быть null. Переданное значение: null");
         }
+
         if (values.length == 0) {
-            throw new IllegalArgumentException("Размер вектора не может быть нулевым");
+            throw new IllegalArgumentException("Размер вектора не может быть нулевым. Длина массива: " + values.length);
         }
 
         components = Arrays.copyOf(values, values.length);
@@ -34,10 +35,11 @@ public class Vector {
     // Конструктор с размерностью и массивом значений
     public Vector(int n, double[] values) {
         if (n <= 0) {
-            throw new IllegalArgumentException("Размерность вектора должна быть положительной");
+            throw new IllegalArgumentException("Размерность вектора должна быть положительной. Переданное значение: " + n);
         }
+
         if (values == null) {
-            throw new NullPointerException("Массив значений не может быть null");
+            throw new NullPointerException("Массив значений не может быть null. Переданное значение: null");
         }
 
         // Создаем временный массив с копией значений
@@ -51,16 +53,21 @@ public class Vector {
     // Получение компоненты по индексу
     public double getComponent(int index) {
         if (index < 0 || index >= components.length) {
-            throw new IndexOutOfBoundsException("Индекс выходит за пределы вектора");
+            throw new IndexOutOfBoundsException("Индекс выходит за пределы вектора. Допустимый диапазон [0, " + components.length + "Переданное значение: " + index);
         }
 
         return components[index];
     }
 
+    public int getSize() {
+        return components.length;
+    }
+
+
     // Установка компоненты по индексу
     public void setComponent(int index, double value) {
         if (index < 0 || index >= components.length) {
-            throw new IndexOutOfBoundsException("Индекс выходит за пределы вектора");
+            throw new IndexOutOfBoundsException("Индекс выходит за пределы вектора. Допустимый диапазон [0, " + components.length + "Переданное значение: " + index);
         }
 
         components[index] = value;
@@ -68,34 +75,56 @@ public class Vector {
 
     // Прибавление вектора
     public void add(Vector vector) {
-        int maxSize = Math.max(components.length, vector.components.length);
-        double[] result = new double[maxSize];
-
-        for (int i = 0; i < maxSize; i++) {
-            double a = i < components.length ? components[i] : 0;
-            double b = i < vector.components.length ? vector.components[i] : 0;
-            result[i] = a + b;
+        if (vector == null) {
+            throw new NullPointerException("Передаваемый вектор не может быть null");
         }
 
-        components = result;
+        // Если размеры векторов совпадают
+        if (components.length == vector.components.length) {
+            for (int i = 0; i < components.length; i++) {
+                components[i] += vector.components[i];
+            }
+        } else {
+            int maxSize = Math.max(components.length, vector.components.length);
+            double[] result = new double[maxSize];
+
+            for (int i = 0; i < maxSize; i++) {
+                double a = i < components.length ? components[i] : 0;
+                double b = i < vector.components.length ? vector.components[i] : 0;
+                result[i] = a + b;
+            }
+
+            components = result;
+        }
     }
 
     // Вычитание вектора
     public void subtract(Vector vector) {
-        int maxSize = Math.max(components.length, vector.components.length);
-        double[] result = new double[maxSize];
-
-        for (int i = 0; i < maxSize; i++) {
-            double a = i < components.length ? components[i] : 0;
-            double b = i < vector.components.length ? vector.components[i] : 0;
-            result[i] = a - b;
+        if (vector == null) {
+            throw new NullPointerException("Передаваемый вектор не может быть null");
         }
 
-        components = result;
+        // Если размеры векторов совпадают
+        if (components.length == vector.components.length) {
+            for (int i = 0; i < components.length; i++) {
+                components[i] -= vector.components[i];
+            }
+        } else {
+            int maxSize = Math.max(components.length, vector.components.length);
+            double[] result = new double[maxSize];
+
+            for (int i = 0; i < maxSize; i++) {
+                double a = i < components.length ? components[i] : 0;
+                double b = i < vector.components.length ? vector.components[i] : 0;
+                result[i] = a - b;
+            }
+
+            components = result;
+        }
     }
 
     // Умножение на скаляр
-    public void multiply(double scalar) {
+    public void getDotProduct(double scalar) {
         for (int i = 0; i < components.length; i++) {
             components[i] *= scalar;
         }
@@ -103,7 +132,7 @@ public class Vector {
 
     // Разворот вектора
     public void reverse() {
-        multiply(-1);
+        getDotProduct(-1);
     }
 
     // Длина вектора
@@ -119,19 +148,21 @@ public class Vector {
 
     @Override
     public String toString() {
-        if (components.length == 0) return "{}";
+        StringBuilder stringBuilder = new StringBuilder("{");
 
-        StringBuilder result = new StringBuilder("{");
-
-        for (int i = 0; i < components.length; i++) {
-            result.append(components[i]);
-            if (i < components.length - 1) {
-                result.append(", ");
-            }
+        for (double component : components) {
+            stringBuilder
+                    .append(component)
+                    .append(',')
+                    .append(' ');
         }
 
-        result.append("}");
-        return result.toString();
+        // Удаляем последнюю запятую и пробел, если есть компоненты
+        if (components.length > 0) {
+            stringBuilder.setLength(stringBuilder.length() - 2);
+        }
+
+        return stringBuilder.append('}').toString();
     }
 
     @Override
@@ -161,40 +192,36 @@ public class Vector {
     }
 
     // Реализация статических методов
-    public static Vector add(Vector v1, Vector v2) {
-        int maxSize = Math.max(v1.components.length, v2.components.length);
-        double[] result = new double[maxSize];
-
-        for (int i = 0; i < maxSize; i++) {
-            double a = i < v1.components.length ? v1.components[i] : 0;
-            double b = i < v2.components.length ? v2.components[i] : 0;
-            result[i] = a + b;
+    public static Vector getSum(Vector vector1, Vector vector2) {
+        if (vector1 == null || vector2 == null) {
+            throw new NullPointerException("Передаваемые вектора не могут быть null");
         }
 
-        return new Vector(maxSize, result);
+        vector1.add(vector2);
+
+        return new Vector(Math.max(vector1.components.length, vector2.components.length), vector1.components);
     }
 
-    public static Vector subtract(Vector v1, Vector v2) {
-        int maxSize = Math.max(v1.components.length, v2.components.length);
-        double[] result = new double[maxSize];
-
-        for (int i = 0; i < maxSize; i++) {
-            double a = i < v1.components.length ? v1.components[i] : 0;
-            double b = i < v2.components.length ? v2.components[i] : 0;
-            result[i] = a - b;
+    public static Vector getDifference(Vector vector1, Vector vector2) {
+        if (vector1 == null || vector2 == null) {
+            throw new NullPointerException("Передаваемые вектора не могут быть null");
         }
 
-        return new Vector(maxSize, result);
+        vector1.subtract(vector2);
+
+        return new Vector(Math.max(vector1.components.length, vector2.components.length), vector1.components);
     }
 
-    public static double dotProduct(Vector v1, Vector v2) {
-        int maxSize = Math.max(v1.components.length, v2.components.length);
+    public static double getDotProduct(Vector vector1, Vector vector2) {
+        if (vector1 == null || vector2 == null) {
+            throw new NullPointerException("Передаваемые вектора не могут быть null");
+        }
+
         double sum = 0;
+        int minSize = Math.min(vector1.components.length, vector2.components.length);
 
-        for (int i = 0; i < maxSize; i++) {
-            double a = i < v1.components.length ? v1.components[i] : 0;
-            double b = i < v2.components.length ? v2.components[i] : 0;
-            sum += a * b;
+        for (int i = 0; i < minSize; i++) {
+            sum += vector1.components[i] * vector2.components[i];
         }
 
         return sum;
