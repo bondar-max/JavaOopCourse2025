@@ -124,7 +124,7 @@ public class Vector {
     }
 
     // Умножение на скаляр (масштабирование вектора)
-    public void scaleVector(double scalar) {
+    public void scale(double scalar) {
         for (int i = 0; i < components.length; i++) {
             components[i] *= scalar;
         }
@@ -132,7 +132,7 @@ public class Vector {
 
     // Разворот вектора
     public void reverse() {
-        scaleVector(-1);
+        scale(-1);
     }
 
     // Длина вектора
@@ -212,7 +212,7 @@ public class Vector {
         return new Vector(Math.max(vector1.components.length, vector2.components.length), vector1.components);
     }
 
-    public static double scaleVector(Vector vector1, Vector vector2) {
+    public static double scale(Vector vector1, Vector vector2) {
         if (vector1 == null || vector2 == null) {
             throw new NullPointerException("Передаваемые вектора не могут быть null");
         }
