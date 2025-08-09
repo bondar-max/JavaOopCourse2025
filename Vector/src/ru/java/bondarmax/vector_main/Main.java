@@ -33,7 +33,7 @@ public class Main {
             Vector sum = Vector.getSum(vector1, vector3);
             System.out.printf("Сумма vector1 и vector3: %s%n%n", sum);
 
-            System.out.printf("Скалярное произведение vector1 и vector2: %.2f%n%n", Vector.getDotProduct(vector1, vector2));
+            System.out.printf("Скалярное произведение vector1 и vector2: %.2f%n%n", Vector.scaleVector(vector1, vector2));
 
             System.out.printf("Длина вектора vector2: %.2f%n%n", vector2.getLength());
 
