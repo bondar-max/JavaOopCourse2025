@@ -11,6 +11,7 @@ public class ShapeAreaComparator implements Comparator<Shape> {
         if (shape1 == null) {
             return shape2 == null ? 0 : -1;
         }
+
         if (shape2 == null) {
             return 1;
         }
