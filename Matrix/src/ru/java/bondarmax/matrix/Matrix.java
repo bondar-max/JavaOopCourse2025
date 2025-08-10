@@ -7,7 +7,6 @@ public class Matrix {
     private final int rowsQuantity;
     private final int columnsQuantity;
 
-
     // Конструктор матрицы размера n x m, заполненной нулями
     public Matrix(int n, int m) {
         rowsQuantity = n;
@@ -20,20 +19,26 @@ public class Matrix {
     }
 
     // Конструктор копирования
-    public Matrix(Matrix other) {
-        rowsQuantity = other.rowsQuantity;
-        columnsQuantity = other.columnsQuantity;
+    public Matrix(Matrix matrix) {
+        rowsQuantity = matrix.rowsQuantity;
+        columnsQuantity = matrix.columnsQuantity;
         rows = new Vector[rowsQuantity];
 
         for (int i = 0; i < rowsQuantity; i++) {
-            rows[i] = new Vector(other.rows[i]);
+            rows[i] = new Vector(matrix.rows[i]);
         }
     }
 
     // Конструктор из двумерного массива
     public Matrix(double[][] array) {
+        int largestColumn = 0;
+
+        for (double[] elements : array) {
+            largestColumn = Math.max(largestColumn, elements.length);
+        }
+
         rowsQuantity = array.length;
-        columnsQuantity = array[0].length;
+        columnsQuantity = largestColumn;
         rows = new Vector[rowsQuantity];
 
         for (int i = 0; i < rowsQuantity; i++) {
@@ -50,7 +55,7 @@ public class Matrix {
 
     // Конструктор из массива векторов
     public Matrix(Vector[] vectors) {
-        int  largestColumn = 0;
+        int largestColumn = 0;
 
         for (Vector v : vectors) {
             largestColumn = Math.max(largestColumn, v.getSize());
@@ -81,14 +86,13 @@ public class Matrix {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("{");
+        StringBuilder stringBuilder = new StringBuilder("{");
+
         for (int i = 0; i < rowsQuantity; i++) {
-            result.append(rows[i].toString());
-            if (i < rowsQuantity - 1) {
-                result.append(", ");
-            }
+            stringBuilder.append(rows[i].toString())
+                    .append(i < rowsQuantity - 1 ? ", " : "");
         }
-        result.append("}");
-        return result.toString();
+
+        return stringBuilder.append('}').toString();
     }
 }
