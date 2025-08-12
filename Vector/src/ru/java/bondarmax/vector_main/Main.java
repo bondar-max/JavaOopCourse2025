@@ -22,7 +22,7 @@ public class Main {
             vector4.setComponent(2, 6);
             System.out.printf("Вектор vector4 после установки по индексу: %s%n%n", vector4);
 
-            System.out.printf("Компонент 1 вектора vector3: : %s%n%n", vector3.getComponent(1));
+            System.out.printf("Компонент 1 вектора vector3: : %s%n%n", vector3.getComponent(100));
 
             vector4.subtract(vector3);
             System.out.printf("Вектор vector4 после вычитания vector3: %s%n%n", vector4);

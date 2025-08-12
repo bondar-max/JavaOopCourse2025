@@ -6,12 +6,12 @@ public class Vector {
     private double[] components;
 
     // Конструктор с размерностью n
-    public Vector(int n) {
-        if (n <= 0) {
-            throw new IllegalArgumentException("Размерность вектора должна быть положительной");
+    public Vector(int dimension) {
+        if (dimension <= 0) {
+            throw new IllegalArgumentException("Размерность вектора должна быть положительной. Переданное значение: dimension = " + dimension);
         }
 
-        components = new double[n];
+        components = new double[dimension];
     }
 
     // Конструктор копирования
@@ -22,38 +22,37 @@ public class Vector {
     // Конструктор с массивом значений
     public Vector(double[] values) {
         if (values == null) {
-            throw new NullPointerException("Массив значений не может быть null. Переданное значение: null");
+            throw new NullPointerException("Переданное значение: null");
         }
 
         if (values.length == 0) {
-            throw new IllegalArgumentException("Размер вектора не может быть нулевым. Длина массива: " + values.length);
+            throw new IllegalArgumentException("Размер вектора не может быть нулевым. Длина массива: values = " + values.length);
         }
 
         components = Arrays.copyOf(values, values.length);
     }
 
     // Конструктор с размерностью и массивом значений
-    public Vector(int n, double[] values) {
-        if (n <= 0) {
-            throw new IllegalArgumentException("Размерность вектора должна быть положительной. Переданное значение: " + n);
+    public Vector(int dimension, double[] values) {
+        if (dimension <= 0) {
+            throw new IllegalArgumentException("Размерность вектора должна быть положительной. Переданное значение: dimension = " + dimension);
         }
 
         if (values == null) {
-            throw new NullPointerException("Массив значений не может быть null. Переданное значение: null");
+            throw new NullPointerException("Переданное значение: null");
         }
 
         // Создаем временный массив с копией значений
-        double[] temp = Arrays.copyOf(values, Math.min(values.length, n));
+        double[] temp = Arrays.copyOf(values, Math.min(values.length, dimension));
 
         // Создаем итоговый массив нужной размерности
-        components = Arrays.copyOf(temp, n);
+        components = Arrays.copyOf(temp, dimension);
     }
-
 
     // Получение компоненты по индексу
     public double getComponent(int index) {
         if (index < 0 || index >= components.length) {
-            throw new IndexOutOfBoundsException("Индекс выходит за пределы вектора. Допустимый диапазон [0, " + components.length + "Переданное значение: " + index);
+            throw new IndexOutOfBoundsException("Допустимый диапазон значений для index: [0, " + components.length + ']' + " Переданное значение: index = " + index);
         }
 
         return components[index];
@@ -63,11 +62,10 @@ public class Vector {
         return components.length;
     }
 
-
     // Установка компоненты по индексу
     public void setComponent(int index, double value) {
         if (index < 0 || index >= components.length) {
-            throw new IndexOutOfBoundsException("Индекс выходит за пределы вектора. Допустимый диапазон [0, " + components.length + "Переданное значение: " + index);
+            throw new IndexOutOfBoundsException("Допустимый диапазон значений для index: [0, " + components.length + ']' + " Переданное значение: index = " + index);
         }
 
         components[index] = value;
@@ -76,7 +74,7 @@ public class Vector {
     // Прибавление вектора
     public void add(Vector vector) {
         if (vector == null) {
-            throw new NullPointerException("Передаваемый вектор не может быть null");
+            throw new NullPointerException("Переданное значение: null");
         }
 
         // Если размеры векторов совпадают
@@ -101,7 +99,7 @@ public class Vector {
     // Вычитание вектора
     public void subtract(Vector vector) {
         if (vector == null) {
-            throw new NullPointerException("Передаваемый вектор не может быть null");
+            throw new NullPointerException("Переданное значение: null");
         }
 
         // Если размеры векторов совпадают
@@ -194,7 +192,7 @@ public class Vector {
     // Реализация статических методов
     public static Vector getSum(Vector vector1, Vector vector2) {
         if (vector1 == null || vector2 == null) {
-            throw new NullPointerException("Передаваемые вектора не могут быть null");
+            throw new NullPointerException("Переданное значение vector1 = " + vector1 + "Переданное значение: vector2 = " + vector2);
         }
 
         vector1.add(vector2);
@@ -204,7 +202,7 @@ public class Vector {
 
     public static Vector getDifference(Vector vector1, Vector vector2) {
         if (vector1 == null || vector2 == null) {
-            throw new NullPointerException("Передаваемые вектора не могут быть null");
+            throw new NullPointerException("Переданное значение: vector1 = " + vector1 + "Переданное значение: vector2 = " + vector2);
         }
 
         vector1.subtract(vector2);
@@ -214,7 +212,7 @@ public class Vector {
 
     public static double scale(Vector vector1, Vector vector2) {
         if (vector1 == null || vector2 == null) {
-            throw new NullPointerException("Передаваемые вектора не могут быть null");
+            throw new NullPointerException("Переданное значение: vector1 = " + vector1 + "Переданное значение: vector2 = " + vector2);
         }
 
         double sum = 0;
