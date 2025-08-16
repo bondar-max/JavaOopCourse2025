@@ -22,7 +22,7 @@ public class Main {
             vector4.setComponent(2, 6);
             System.out.printf("Вектор vector4 после установки по индексу: %s%n%n", vector4);
 
-            System.out.printf("Компонент 1 вектора vector3: : %s%n%n", vector3.getComponent(100));
+            System.out.printf("Компонент 1 вектора vector3: : %s%n%n", vector3.getComponent(2));
 
             vector4.subtract(vector3);
             System.out.printf("Вектор vector4 после вычитания vector3: %s%n%n", vector4);
@@ -33,7 +33,7 @@ public class Main {
             Vector sum = Vector.getSum(vector1, vector3);
             System.out.printf("Сумма vector1 и vector3: %s%n%n", sum);
 
-            System.out.printf("Скалярное произведение vector1 и vector2: %.2f%n%n", Vector.scale(vector1, vector2));
+            System.out.printf("Скалярное произведение vector1 и vector2: %.2f%n%n", Vector.multiply(vector1, vector2));
 
             System.out.printf("Длина вектора vector2: %.2f%n%n", vector2.getLength());
 
@@ -42,7 +42,6 @@ public class Main {
 
             Vector difference = Vector.getDifference(vector3, vector1);
             System.out.println("Разность vector3 и vector1: " + difference);
-
         } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
