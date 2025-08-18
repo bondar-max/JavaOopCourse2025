@@ -208,4 +208,12 @@ public class Vector {
 
         return sum;
     }
+
+    public void resize(int newDimension) {
+        if (newDimension <= 0) {
+            throw new IllegalArgumentException("Размерность должна быть положительной. Передано: " + newDimension);
+        }
+        
+        components = Arrays.copyOf(components, newDimension);
+    }
 }
