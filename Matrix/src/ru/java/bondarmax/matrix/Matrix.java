@@ -36,11 +36,15 @@ public class Matrix {
      * Конструктор из двумерного массива
      */
     public Matrix(double[][] array) {
-        if (array == null || array.length == 0) {
-            throw new IllegalArgumentException("Массив строк не может быть null или пустым");
+        if (array == null) {
+            throw new NullPointerException("Массив строк не может быть null");
         }
 
-        final int rowsQuantity = array.length;
+        if (array.length == 0) {
+            throw new IllegalArgumentException("Массив строк не может быть пустым");
+        }
+
+        int rowsQuantity = array.length;
         int maxColumnsQuantity = 0;
 
         for (double[] row : array) {
@@ -65,8 +69,12 @@ public class Matrix {
      * Конструктор из массива векторов
      */
     public Matrix(Vector[] vectors) {
-        if (vectors == null || vectors.length == 0) {
-            throw new IllegalArgumentException("Массив векторов не может быть null или пустым");
+        if (vectors == null) {
+            throw new NullPointerException("Массив векторов не может быть null");
+        }
+
+        if (vectors.length == 0) {
+            throw new IllegalArgumentException("Массив векторов не может быть пустым");
         }
 
         for (Vector v : vectors) {
@@ -75,7 +83,7 @@ public class Matrix {
             }
         }
 
-        final int rowsQuantity = vectors.length;
+        int rowsQuantity = vectors.length;
         int maxColumnsQuantity = 0;
 
         // Находим максимальную длину
@@ -94,7 +102,6 @@ public class Matrix {
 
     /**
      * Получение количества строк
-     * @return количество строк
      */
     public int getRowsQuantity() {
         return rows.length;
@@ -102,7 +109,6 @@ public class Matrix {
 
     /**
      * Получение количества столбцов
-     * @return количество колонок
      */
     public int getColumnsQuantity() {
         if (rows.length == 0) {
@@ -127,8 +133,7 @@ public class Matrix {
         final int rowsQuantity = rows.length;
 
         for (int i = 0; i < rowsQuantity; i++) {
-            stringBuilder.append(rows[i].toString())
-                    .append(i < rowsQuantity - 1 ? ", " : "");
+            stringBuilder.append(rows[i].toString()).append(i < rowsQuantity - 1 ? ", " : "");
         }
 
         return stringBuilder.append('}').toString();
@@ -136,7 +141,6 @@ public class Matrix {
 
     /**
      * Получение вектора-строки по индексу
-     * @return вектор-строка
      */
     public Vector getVectorRow(int index) {
         if (index < 0 || index >= getRowsQuantity()) {
@@ -151,9 +155,7 @@ public class Matrix {
      */
     public void setVectorRow(int index, Vector vector) {
         if (index < 0 || index >= getRowsQuantity()) {
-            throw new IndexOutOfBoundsException(
-                    String.format("Индекс строки должен быть в диапазоне [0, %d]. Передано: %d", getRowsQuantity() - 1, index)
-            );
+            throw new IndexOutOfBoundsException(String.format("Индекс строки должен быть в диапазоне [0, %d]. Передано: %d", getRowsQuantity() - 1, index));
         }
 
         if (vector == null) {
@@ -173,7 +175,6 @@ public class Matrix {
 
     /**
      * Получение вектора-столбца по индексу
-     * @return выбранный вектор-столбец
      */
     public Vector getVectorColumn(int index) {
         if (index < 0 || index >= getColumnsQuantity()) {
@@ -191,8 +192,8 @@ public class Matrix {
         return new Vector(columns);
     }
 
-    /** Транспонирование матрицы
-     * @return транспонированная матрица
+    /**
+     * Транспонирование матрицы
      */
     public Matrix transpose() {
         int rowsQuantity = getRowsQuantity();
@@ -220,23 +221,20 @@ public class Matrix {
 
     /**
      * Вычисляет определитель квадратной матрицы методом Гаусса (приведение к ступенчатому виду).
-     * @return значение определителя
      */
     public double determinant() {
         int rowsQuantity = getRowsQuantity();
         int columnsQuantity = getColumnsQuantity();
 
         if (rowsQuantity != columnsQuantity) {
-            throw new IllegalArgumentException(
-                    "Определитель можно вычислить только для квадратной матрицы. Размер: " + rowsQuantity + "x" + columnsQuantity
-            );
+            throw new IllegalArgumentException("Определитель можно вычислить только для квадратной матрицы. Размер: " + rowsQuantity + "x" + columnsQuantity);
         }
 
-        if (rowsQuantity == 0){
+        if (rowsQuantity == 0) {
             return 1.0;
         }
 
-        if (rowsQuantity == 1){
+        if (rowsQuantity == 1) {
             return getMatrixElement(0, 0);
         }
 
@@ -246,7 +244,7 @@ public class Matrix {
         // Счётчик перестановок строк
         int swapCount = 0;
 
-        // Основной цикл — приводим к верхнетреугольному виду
+        // Основной цикл — приводим к верхне-треугольному виду
         for (int pivotColumn = 0; pivotColumn < rowsQuantity; pivotColumn++) {
             // Ищем "ведущий" элемент (не ноль) в текущем столбце, начиная со строки pivotColumn
             int pivotRow = pivotColumn;
@@ -333,5 +331,170 @@ public class Matrix {
 
         return rows[row].getComponent(column);
     }
-}
 
+
+    /**
+     * Умножает эту матрицу на заданный вектор.
+     */
+    public Vector multiply(Vector vector) {
+        if (vector == null) {
+            throw new NullPointerException("vector не может быть null");
+        }
+
+        int rowsQuantity = getRowsQuantity();
+        int columnsQuantity = getColumnsQuantity();
+
+        if (vector.getSize() != columnsQuantity) {
+            throw new IllegalArgumentException("Размер вектора должен быть равен числу столбцов матрицы: " + columnsQuantity + ", но передан вектор размером " + vector.getSize());
+        }
+
+        double[] resultComponents = new double[rowsQuantity];
+
+        for (int rowIndex = 0; rowIndex < rowsQuantity; rowIndex++) {
+            double sum = 0.0;
+
+            for (int columnIndex = 0; columnIndex < columnsQuantity; columnIndex++) {
+                double matrixElement = getMatrixElement(rowIndex, columnIndex);
+                double vectorElement = vector.getComponent(columnIndex);
+                sum += matrixElement * vectorElement;
+            }
+
+            resultComponents[rowIndex] = sum;
+        }
+
+        return new Vector(resultComponents);
+    }
+
+    /**
+     * Складывает данную матрицу с другой.
+     */
+    public Matrix add(Matrix matrixToAdd) {
+        if (matrixToAdd == null) {
+            throw new NullPointerException("Матрица для сложения не может быть null");
+        }
+
+        validateSameDimensions(matrixToAdd, "Сложение");
+
+        Matrix resultMatrix = new Matrix(this);
+        int rowsQuantity = getRowsQuantity();
+        int columnsQuantity = getColumnsQuantity();
+
+        for (int rowIndex = 0; rowIndex < rowsQuantity; rowIndex++) {
+            for (int columnIndex = 0; columnIndex < columnsQuantity; columnIndex++) {
+                double otherValue = matrixToAdd.getMatrixElement(rowIndex, columnIndex);
+                double currentValue = resultMatrix.rows[rowIndex].getComponent(columnIndex);
+                resultMatrix.rows[rowIndex].setComponent(columnIndex, currentValue + otherValue);
+            }
+        }
+
+        return resultMatrix;
+    }
+
+    /**
+     * Вычитает из данной матрицы другую.
+     */
+    public Matrix subtract(Matrix matrixToSubtract) {
+        if (matrixToSubtract == null) {
+            throw new NullPointerException("Матрица для вычитания не может быть null");
+        }
+
+        validateSameDimensions(matrixToSubtract, "Вычитание");
+
+        Matrix resultMatrix = new Matrix(this);
+        int rowsQuantity = getRowsQuantity();
+        int columnsQuantity = getColumnsQuantity();
+
+        for (int rowIndex = 0; rowIndex < rowsQuantity; rowIndex++) {
+            for (int columnIndex = 0; columnIndex < columnsQuantity; columnIndex++) {
+                double otherValue = matrixToSubtract.getMatrixElement(rowIndex, columnIndex);
+                double currentValue = resultMatrix.rows[rowIndex].getComponent(columnIndex);
+                resultMatrix.rows[rowIndex].setComponent(columnIndex, currentValue - otherValue);
+            }
+        }
+
+        return resultMatrix;
+    }
+
+    /**
+     * Проверяет совпадение размеров с другой матрицей.
+     */
+    private void validateSameDimensions(Matrix matrix, String operation) {
+        if (matrix == null) {
+            throw new NullPointerException("other не может быть null");
+        }
+        if (getRowsQuantity() != matrix.getRowsQuantity() || getColumnsQuantity() != matrix.getColumnsQuantity()) {
+            throw new IllegalArgumentException(operation + ": размеры матриц не совпадают: " + getRowsQuantity() + "x" + getColumnsQuantity() + " и " + matrix.getRowsQuantity() + "x" + matrix.getColumnsQuantity());
+        }
+    }
+
+    /**
+     * Возвращает сумму двух матриц.
+     */
+    public static Matrix getSum(Matrix leftMatrix, Matrix rightMatrix) {
+        validateNotNull(leftMatrix, rightMatrix, "Сложение");
+
+        Matrix result = new Matrix(leftMatrix);
+
+        return result.add(rightMatrix);
+    }
+
+    /**
+     * Возвращает разность двух матриц.
+     */
+    public static Matrix getDifference(Matrix leftMatrix, Matrix rightMatrix) {
+        validateNotNull(leftMatrix, rightMatrix, "Вычитание");
+
+        Matrix result = new Matrix(leftMatrix);
+
+        return result.subtract(rightMatrix);
+    }
+
+    /**
+     * Проверяет, что обе матрицы не null.
+     */
+    private static void validateNotNull(Matrix leftMatrix, Matrix rightMatrix, String operation) {
+        if (leftMatrix == null) {
+            throw new NullPointerException(operation + ": первая матрица не может быть null");
+        }
+
+        if (rightMatrix == null) {
+            throw new NullPointerException(operation + ": вторая матрица не может быть null");
+        }
+    }
+
+    /**
+     * Умножает две матрицы: result = left × right.(Число столбцов левой матрицы должно равняться числу строк правой)
+     * левая матрица (m × n), правая матрица (n × p), новая матрица размером m × p — произведение
+     */
+    public static Matrix getProduct(Matrix leftMatrix, Matrix rightMatrix) {
+        validateNotNull(leftMatrix, rightMatrix, "Умножение");
+
+        int resultRowsQuantity = leftMatrix.getRowsQuantity();
+        int commonDimension = leftMatrix.getColumnsQuantity(); // столбцы левой = строки правой
+        int resultColumnsQuantity = rightMatrix.getColumnsQuantity();
+
+        if (commonDimension != rightMatrix.getRowsQuantity()) {
+            throw new IllegalArgumentException("Несовместимые размеры: левая матрица имеет " + commonDimension + " столбцов, а правая — " + rightMatrix.getRowsQuantity() + " строк");
+        }
+
+        // Создаём массив для результата
+        double[][] resultMatrix = new double[resultRowsQuantity][resultColumnsQuantity];
+
+        // Основной цикл: result[i][j] = Σ left[i][k] * right[k][j]
+        for (int rowIndex = 0; rowIndex < resultRowsQuantity; rowIndex++) {
+            for (int colIndex = 0; colIndex < resultColumnsQuantity; colIndex++) {
+                double sum = 0.0;
+
+                for (int k = 0; k < commonDimension; k++) {
+                    double leftValue = leftMatrix.getMatrixElement(rowIndex, k);
+                    double rightValue = rightMatrix.getMatrixElement(k, colIndex);
+                    sum += leftValue * rightValue;
+                }
+
+                resultMatrix[rowIndex][colIndex] = sum;
+            }
+        }
+
+        return new Matrix(resultMatrix);
+    }
+}
