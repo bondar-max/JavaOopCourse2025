@@ -24,16 +24,16 @@ public class Main {
 
             System.out.printf("Компонент 1 вектора vector3: : %s%n%n", vector3.getComponent(2));
 
-            vector4.subtract(vector3);
-            System.out.printf("Вектор vector4 после вычитания vector3: %s%n%n", vector4);
+            Vector vector5 = vector4.subtract(vector3);
+            System.out.printf("Вектор vector4 после вычитания vector3: %s%n%n", vector5);
 
-            vector1.add(vector2);
-            System.out.printf("Вектор vector1 после добавления vector2: %s%n%n", vector1);
+            Vector vector6 = vector1.add(vector2);
+            System.out.printf("Вектор vector1 после добавления vector2: %s%n%n", vector6);
 
             Vector sum = Vector.getSum(vector1, vector3);
             System.out.printf("Сумма vector1 и vector3: %s%n%n", sum);
 
-            System.out.printf("Скалярное произведение vector1 и vector2: %.2f%n%n", Vector.multiply(vector1, vector2));
+            System.out.printf("Скалярное произведение vector1 и vector2: %.2f%n%n", Vector.getProduct(vector1, vector2));
 
             System.out.printf("Длина вектора vector2: %.2f%n%n", vector2.getLength());
 
