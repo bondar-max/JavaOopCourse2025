@@ -49,15 +49,6 @@ public class Vector {
         this.components = Arrays.copyOf(components, dimension);
     }
 
-    // Получение компоненты по индексу
-    public double getComponent(int index) {
-        if (index < 0 || index >= components.length) {
-            throw new IndexOutOfBoundsException("Index должен быть [0, " + (components.length - 1) + ']' + " Переданное значение: index = " + index);
-        }
-
-        return components[index];
-    }
-
     public int getSize() {
         return components.length;
     }
@@ -65,49 +56,47 @@ public class Vector {
     // Установка компоненты по индексу
     public void setComponent(int index, double component) {
         if (index < 0 || index >= components.length) {
-            throw new IndexOutOfBoundsException("Index должен быть [0, " + (components.length - 1) + ']' + " Переданное значение: index = " + index);
+            throw new IndexOutOfBoundsException(String.format("Index должен быть в диапазоне [0, %d]. Переданное значение: index = %d", components.length - 1, index));
         }
 
         components[index] = component;
     }
 
-
-    public Vector add(Vector vector) {
-        if (vector == null) {
-            throw new NullPointerException("Vector не может быть null");
+    // Получение компоненты по индексу
+    public double getComponent(int index) {
+        if (index < 0 || index >= components.length) {
+            throw new IndexOutOfBoundsException(String.format("Index должен быть в диапазоне [0, %d]. Переданное значение: index = %d", components.length - 1, index));
         }
 
-        Vector result = new Vector(this);
-        int resultSize = Math.max(result.components.length, vector.components.length);
-
-        if (result.components.length < resultSize) {
-            result.components = Arrays.copyOf(result.components, resultSize);
-        }
-
-        for (int i = 0; i < vector.components.length; i++) {
-            result.components[i] += vector.components[i];
-        }
-
-        return result;
+        return components[index];
     }
 
-    public Vector subtract(Vector vector) {
+    public void add(Vector vector) {
         if (vector == null) {
             throw new NullPointerException("Vector не может быть null");
         }
 
-        Vector result = new Vector(this);
-        int resultSize = Math.max(result.components.length, vector.components.length);
-
-        if (result.components.length < resultSize) {
-            result.components = Arrays.copyOf(result.components, resultSize);
+        if (components.length < vector.components.length) {
+            components = Arrays.copyOf(components, vector.components.length);
         }
 
         for (int i = 0; i < vector.components.length; i++) {
-            result.components[i] -= vector.components[i];
+            components[i] += vector.components[i];
+        }
+    }
+
+    public void subtract(Vector vector) {
+        if (vector == null) {
+            throw new NullPointerException("Vector не может быть null");
         }
 
-        return result;
+        if (components.length < vector.components.length) {
+            components = Arrays.copyOf(components, vector.components.length);
+        }
+
+        for (int i = 0; i < vector.components.length; i++) {
+            components[i] -= vector.components[i];
+        }
     }
 
     // Умножение на скаляр (масштабирование вектора)
@@ -167,14 +156,16 @@ public class Vector {
     // Реализация статических методов
     public static Vector getSum(Vector vector1, Vector vector2) {
         Vector result = new Vector(vector1);
+        result.add(vector2);
 
-        return result.add(vector2);
+        return result;
     }
 
     public static Vector getDifference(Vector vector1, Vector vector2) {
         Vector result = new Vector(vector1);
+        result.subtract(vector2);
 
-        return result.subtract(vector2);
+        return result;
     }
 
     public static double getProduct(Vector vector1, Vector vector2) {
@@ -195,13 +186,5 @@ public class Vector {
         }
 
         return sum;
-    }
-
-    public void resize(int newDimension) {
-        if (newDimension <= 0) {
-            throw new IllegalArgumentException("Размерность должна быть положительной. Передано: " + newDimension);
-        }
-
-        components = Arrays.copyOf(components, newDimension);
     }
 }
