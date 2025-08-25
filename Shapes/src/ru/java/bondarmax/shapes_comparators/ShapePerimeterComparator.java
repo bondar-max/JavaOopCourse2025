@@ -1,6 +1,6 @@
 package ru.java.bondarmax.shapes_comparators;
 
-import ru.java.bondarmax.shapes.Shape;
+import ru.java.bondarmax.shapes.Shape;  
 
 import java.util.Comparator;
 
