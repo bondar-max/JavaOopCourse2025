@@ -1,14 +1,16 @@
 package ru.java.bondarmax.list;
 
-import ru.java.bondarmax.list_node.*;
+import ru.java.bondarmax.list_node.ListNode;
 
 import java.util.NoSuchElementException;
 
 public class SinglyLinkedList {
     private ListNode head;
+    private int listSize;
 
     public SinglyLinkedList() {
         head = null;
+        listSize = 0;
     }
 
     public ListNode getHead() {
@@ -17,21 +19,14 @@ public class SinglyLinkedList {
 
     public void setHead(ListNode newHead) {
         head = newHead;
+        listSize = getLinkedListSize();
     }
 
     /**
      * Получение размера списка
      */
     public int getLinkedListSize() {
-        int elementCounter = 0;
-        ListNode currentElement = head;
-
-        while (currentElement != null) {
-            elementCounter++;
-            currentElement = currentElement.getNext();
-        }
-
-        return elementCounter;
+        return listSize;
     }
 
     /**
@@ -47,58 +42,53 @@ public class SinglyLinkedList {
 
     /**
      * Изменение значения по указанному индексу. Изменение значения по индексу пусть выдает старое значение.
-     * @throws IndexOutOfBoundsException если индекс меньше нуля
+     *
+     * @throws IndexOutOfBoundsException если индекс вне диапазона
      */
     public Integer updateElementValue(int targetIndex, int newElementValue) {
-        if (targetIndex < 0) {
-            throw new IndexOutOfBoundsException(String.format("Index должен быть неотрицательным. Переданное значение: index = %d", targetIndex));
+        if (targetIndex < 0 || targetIndex >= listSize) {
+            throw new IndexOutOfBoundsException(String.format("Index должен быть в диапазоне [0, %d). Переданное значение: index = %d", listSize, targetIndex));
         }
 
         ListNode currentElement = head;
 
-        for (int currentIndex = 0; currentElement != null; currentIndex++) {
-            if (currentIndex == targetIndex) {
-                int previousValue = currentElement.getValue();
-                currentElement.setValue(newElementValue);
-                return previousValue;
-            }
-
+        for (int currentIndex = 0; currentIndex < targetIndex; currentIndex++) {
             currentElement = currentElement.getNext();
         }
 
-        return null;
+        int previousValue = currentElement.getValue();
+        currentElement.setValue(newElementValue);
+
+        return previousValue;
     }
 
     /**
      * Получение по указанному индексу.
-     * @throws IndexOutOfBoundsException если индекс меньше нуля
+     *
+     * @throws IndexOutOfBoundsException если индекс вне диапазона
      */
     public Integer getElementByIndex(int targetIndex) {
-        if (targetIndex < 0) {
-            throw new IndexOutOfBoundsException(String.format("Index должен быть неотрицательным. Переданное значение: index = %d", targetIndex));
+        if (targetIndex < 0 || targetIndex >= listSize) {
+            throw new IndexOutOfBoundsException(String.format("Index должен быть в диапазоне [0, %d). Переданное значение: index = %d", listSize, targetIndex));
         }
 
         ListNode currentElement = head;
 
-        for (int currentIndex = 0; currentElement != null; currentIndex++) {
-            if (currentIndex == targetIndex) {
-                return currentElement.getValue();
-            }
-
+        for (int currentIndex = 0; currentIndex < targetIndex; currentIndex++) {
             currentElement = currentElement.getNext();
         }
 
-        return null;
+        return currentElement.getValue();
     }
-
 
     /**
      * Удаление элемента по индексу, пусть выдает значение элемента
-     * @throws IndexOutOfBoundsException если индекс меньше нуля или выходит за пределы списка
+     *
+     * @throws IndexOutOfBoundsException если индекс вне диапазона
      */
     public Integer removeElementByIndex(int targetIndex) {
-        if (targetIndex < 0) {
-            throw new IndexOutOfBoundsException(String.format("Index должен быть неотрицательным. Переданное значение: index = %d", targetIndex));
+        if (targetIndex < 0 || targetIndex >= listSize) {
+            throw new IndexOutOfBoundsException(String.format("Index должен быть в диапазоне [0, %d). Переданное значение: index = %d", listSize, targetIndex));
         }
 
         if (head == null) {
@@ -108,63 +98,60 @@ public class SinglyLinkedList {
         if (targetIndex == 0) {
             int removedValue = head.getValue();
             head = head.getNext();
+            listSize--;
+
             return removedValue;
         }
 
         ListNode currentElement = head;
-        int currentIndex = 0;
 
-        for (; currentElement != null && currentElement.getNext() != null && currentIndex < targetIndex - 1; currentIndex++) {
+        for (int i = 0; i < targetIndex - 1; i++) {
             currentElement = currentElement.getNext();
-        }
-
-        if (currentElement == null || currentElement.getNext() == null) {
-            throw new IndexOutOfBoundsException(String.format("Index выходит за пределы списка. Текущая длина: %d. Переданное значение: index = %d", currentIndex + 1, targetIndex));
         }
 
         int removedValue = currentElement.getNext().getValue();
         currentElement.setNext(currentElement.getNext().getNext());
+        listSize--;
 
         return removedValue;
     }
 
-    /*
-     * вставка элемента в начало
+    /**
+     * Вставка элемента в начало
      */
     public void insertElementAtStart(int newElementValue) {
         ListNode newNode = new ListNode(newElementValue);
         newNode.setNext(head);
         head = newNode;
+        listSize++;
     }
 
     /**
      * Вставка элемента по индексу
-     * @throws IndexOutOfBoundsException если индекс меньше нуля или выходит за пределы списка
+     *
+     * @throws IndexOutOfBoundsException если индекс вне диапазона
      */
     public void insertElementAtIndex(int targetIndex, int newElementValue) {
-        if (targetIndex < 0) {
-            throw new IndexOutOfBoundsException(String.format("Index должен быть неотрицательным. Переданное значение: index = %d", targetIndex));
+        if (targetIndex < 0 || targetIndex > listSize) {
+            throw new IndexOutOfBoundsException(String.format("Index должен быть в диапазоне 0, %d). Переданное значение: index = %d", listSize, targetIndex));
         }
 
         if (targetIndex == 0) {
             insertElementAtStart(newElementValue);
+            return;
         }
 
         ListNode newNode = new ListNode(newElementValue);
         ListNode currentElement = head;
-        int currentIndex = 0;
 
-        while (currentElement != null && currentIndex < targetIndex - 1) {
+        for (int i = 0; i < targetIndex - 1; i++) {
             currentElement = currentElement.getNext();
-            currentIndex++;
-        }
-
-        if (currentElement == null) {
-            throw new IndexOutOfBoundsException(String.format("Index выходит за пределы списка. Текущая длина: %d. Переданное значение: index = %d", currentIndex + 1, targetIndex));
         }
 
         newNode.setNext(currentElement.getNext());
         currentElement.setNext(newNode);
+
+        listSize++;
     }
 
     /**
@@ -177,6 +164,8 @@ public class SinglyLinkedList {
 
         if (head.getValue() == targetValue) {
             head = head.getNext();
+            listSize--;
+
             return true;
         }
 
@@ -185,6 +174,8 @@ public class SinglyLinkedList {
         while (currentElement.getNext() != null) {
             if (currentElement.getNext().getValue() == targetValue) {
                 currentElement.setNext(currentElement.getNext().getNext());
+                listSize--;
+
                 return true;
             }
 
@@ -196,6 +187,7 @@ public class SinglyLinkedList {
 
     /**
      * Удаление первого элемента, пусть выдает значение элемента
+     *
      * @throws NoSuchElementException исключение если список пуст
      */
     public int removeFirstElement() {
@@ -205,6 +197,7 @@ public class SinglyLinkedList {
 
         int removedValue = head.getValue();
         head = head.getNext();
+        listSize--;
 
         return removedValue;
     }
@@ -256,6 +249,7 @@ public class SinglyLinkedList {
         builder.append("[");
 
         ListNode current = head;
+
         while (current != null) {
             builder.append(current.getValue());
 
@@ -267,6 +261,7 @@ public class SinglyLinkedList {
         }
 
         builder.append("]");
+
         return builder.toString();
     }
 }
