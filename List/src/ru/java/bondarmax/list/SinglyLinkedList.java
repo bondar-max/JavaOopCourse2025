@@ -11,6 +11,14 @@ public class SinglyLinkedList {
         head = null;
     }
 
+    public ListNode getHead() {
+        return head;
+    }
+
+    public void setHead(ListNode newHead) {
+        head = newHead;
+    }
+
     /**
      * Получение размера списка
      */
@@ -40,7 +48,7 @@ public class SinglyLinkedList {
     /**
      * Изменение значения по указанному индексу. Изменение значения по индексу пусть выдает старое значение.
      */
-    public Integer updateElementValue(int targetIndex, int newElementValue) {
+    public Integer updateElementValue(int targetIndex, int newElementValue) throws IndexOutOfBoundsException {
         if (targetIndex < 0) {
             throw new IndexOutOfBoundsException(String.format("Index должен быть неотрицательным. Переданное значение: index = %d", targetIndex));
         }
@@ -63,7 +71,7 @@ public class SinglyLinkedList {
     /**
      * Получение по указанному индексу.
      */
-    public Integer getElementByIndex(int targetIndex) {
+    public Integer getElementByIndex(int targetIndex) throws IndexOutOfBoundsException {
         if (targetIndex < 0) {
             throw new IndexOutOfBoundsException(String.format("Index должен быть неотрицательным. Переданное значение: index = %d", targetIndex));
         }
@@ -85,7 +93,7 @@ public class SinglyLinkedList {
     /**
      * Удаление элемента по индексу, пусть выдает значение элемента
      */
-    public Integer removeElementByIndex(int targetIndex) {
+    public Integer removeElementByIndex(int targetIndex) throws IndexOutOfBoundsException {
         if (targetIndex < 0) {
             throw new IndexOutOfBoundsException(String.format("Index должен быть неотрицательным. Переданное значение: index = %d", targetIndex));
         }
@@ -129,7 +137,7 @@ public class SinglyLinkedList {
     /**
      * Вставка элемента по индексу
      */
-    public void insertElementAtIndex(int targetIndex, int newElementValue) {
+    public void insertElementAtIndex(int targetIndex, int newElementValue) throws IndexOutOfBoundsException {
         if (targetIndex < 0) {
             throw new IndexOutOfBoundsException(String.format("Index должен быть неотрицательным. Переданное значение: index = %d", targetIndex));
         }
@@ -235,5 +243,25 @@ public class SinglyLinkedList {
         }
 
         return newLinkedListHead;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[");
+
+        ListNode current = head;
+        while (current != null) {
+            builder.append(current.getValue());
+
+            if (current.getNext() != null) {
+                builder.append(" -> ");
+            }
+
+            current = current.getNext();
+        }
+
+        builder.append("]");
+        return builder.toString();
     }
 }
