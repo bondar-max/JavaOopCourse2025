@@ -47,8 +47,9 @@ public class SinglyLinkedList {
 
     /**
      * Изменение значения по указанному индексу. Изменение значения по индексу пусть выдает старое значение.
+     * @throws IndexOutOfBoundsException если индекс меньше нуля
      */
-    public Integer updateElementValue(int targetIndex, int newElementValue) throws IndexOutOfBoundsException {
+    public Integer updateElementValue(int targetIndex, int newElementValue) {
         if (targetIndex < 0) {
             throw new IndexOutOfBoundsException(String.format("Index должен быть неотрицательным. Переданное значение: index = %d", targetIndex));
         }
@@ -70,8 +71,9 @@ public class SinglyLinkedList {
 
     /**
      * Получение по указанному индексу.
+     * @throws IndexOutOfBoundsException если индекс меньше нуля
      */
-    public Integer getElementByIndex(int targetIndex) throws IndexOutOfBoundsException {
+    public Integer getElementByIndex(int targetIndex) {
         if (targetIndex < 0) {
             throw new IndexOutOfBoundsException(String.format("Index должен быть неотрицательным. Переданное значение: index = %d", targetIndex));
         }
@@ -92,8 +94,9 @@ public class SinglyLinkedList {
 
     /**
      * Удаление элемента по индексу, пусть выдает значение элемента
+     * @throws IndexOutOfBoundsException если индекс меньше нуля или выходит за пределы списка
      */
-    public Integer removeElementByIndex(int targetIndex) throws IndexOutOfBoundsException {
+    public Integer removeElementByIndex(int targetIndex) {
         if (targetIndex < 0) {
             throw new IndexOutOfBoundsException(String.format("Index должен быть неотрицательным. Переданное значение: index = %d", targetIndex));
         }
@@ -136,8 +139,9 @@ public class SinglyLinkedList {
 
     /**
      * Вставка элемента по индексу
+     * @throws IndexOutOfBoundsException если индекс меньше нуля или выходит за пределы списка
      */
-    public void insertElementAtIndex(int targetIndex, int newElementValue) throws IndexOutOfBoundsException {
+    public void insertElementAtIndex(int targetIndex, int newElementValue) {
         if (targetIndex < 0) {
             throw new IndexOutOfBoundsException(String.format("Index должен быть неотрицательным. Переданное значение: index = %d", targetIndex));
         }
@@ -192,8 +196,9 @@ public class SinglyLinkedList {
 
     /**
      * Удаление первого элемента, пусть выдает значение элемента
+     * @throws NoSuchElementException исключение если список пуст
      */
-    public int removeFirstElement() throws NoSuchElementException {
+    public int removeFirstElement() {
         if (head == null) {
             throw new NoSuchElementException("Список пуст, невозможно удалить элемент");
         }
