@@ -53,15 +53,6 @@ public class Vector {
         return components.length;
     }
 
-    // Установка компоненты по индексу
-    public void setComponent(int index, double component) {
-        if (index < 0 || index >= components.length) {
-            throw new IndexOutOfBoundsException(String.format("Index должен быть в диапазоне [0, %d]. Переданное значение: index = %d", components.length - 1, index));
-        }
-
-        components[index] = component;
-    }
-
     // Получение компоненты по индексу
     public double getComponent(int index) {
         if (index < 0 || index >= components.length) {
@@ -69,6 +60,15 @@ public class Vector {
         }
 
         return components[index];
+    }
+
+    // Установка компоненты по индексу
+    public void setComponent(int index, double component) {
+        if (index < 0 || index >= components.length) {
+            throw new IndexOutOfBoundsException(String.format("Index должен быть в диапазоне [0, %d]. Переданное значение: index = %d", components.length - 1, index));
+        }
+
+        components[index] = component;
     }
 
     public void add(Vector vector) {
@@ -177,7 +177,7 @@ public class Vector {
             throw new NullPointerException("Vector2 не может быть null");
         }
 
-        final int minSize = Math.min(vector1.components.length, vector2.components.length);
+        int minSize = Math.min(vector1.components.length, vector2.components.length);
 
         double sum = 0;
 
