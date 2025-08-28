@@ -1,19 +1,19 @@
 package ru.java.bondarmax.list;
 
-import ru.java.bondarmax.list_node.ListNode;
+import ru.java.bondarmax.list_node.*;
 
 import java.util.NoSuchElementException;
 
 public class SinglyLinkedList {
     private ListNode head;
 
-    public SinglyLinkedList(){
+    public SinglyLinkedList() {
         head = null;
     }
 
-	/*
-	 * получение размера списка
-	 */
+    /**
+     * Получение размера списка
+     */
     public int getLinkedListSize() {
         int elementCounter = 0;
         ListNode currentElement = head;
@@ -26,8 +26,8 @@ public class SinglyLinkedList {
         return elementCounter;
     }
 
-    /*
-     * получение значения первого элемента
+    /**
+     * Получение значения первого элемента
      */
     public Integer getFirstListElement() {
         if (head == null) {
@@ -37,8 +37,8 @@ public class SinglyLinkedList {
         return head.getValue();
     }
 
-    /*
-     * изменение значения по указанному индексу. Изменение значения по индексу пусть выдает старое значение.
+    /**
+     * Изменение значения по указанному индексу. Изменение значения по индексу пусть выдает старое значение.
      */
     public Integer updateElementValue(int targetIndex, int newElementValue) {
         if (targetIndex < 0) {
@@ -60,8 +60,8 @@ public class SinglyLinkedList {
         return null;
     }
 
-    /*
-     * получение по указанному индексу.
+    /**
+     * Получение по указанному индексу.
      */
     public Integer getElementByIndex(int targetIndex) {
         if (targetIndex < 0) {
@@ -82,8 +82,8 @@ public class SinglyLinkedList {
     }
 
 
-    /*
-     * удаление элемента по индексу, пусть выдает значение элемента
+    /**
+     * Удаление элемента по индексу, пусть выдает значение элемента
      */
     public Integer removeElementByIndex(int targetIndex) {
         if (targetIndex < 0) {
@@ -126,8 +126,8 @@ public class SinglyLinkedList {
         head = newNode;
     }
 
-    /*
-     * вставка элемента по индексу
+    /**
+     * Вставка элемента по индексу
      */
     public void insertElementAtIndex(int targetIndex, int newElementValue) {
         if (targetIndex < 0) {
@@ -155,8 +155,8 @@ public class SinglyLinkedList {
         currentElement.setNext(newNode);
     }
 
-    /*
-     * удаление узла по значению, пусть выдает true, если элемент был удален
+    /**
+     * Удаление узла по значению, пусть выдает true, если элемент был удален
      */
     public boolean removeElementByValue(int targetValue) {
         if (head == null) {
@@ -182,8 +182,8 @@ public class SinglyLinkedList {
         return false;
     }
 
-    /*
-     * удаление первого элемента, пусть выдает значение элемента
+    /**
+     * Удаление первого элемента, пусть выдает значение элемента
      */
     public int removeFirstElement() throws NoSuchElementException {
         if (head == null) {
@@ -196,12 +196,44 @@ public class SinglyLinkedList {
         return removedValue;
     }
 
-    /*
-     * разворот списка за линейное время
+    /**
+     * Разворот списка за линейное время
      */
+    public void reverseLinkedList() {
+        ListNode currentNode = head;
+        ListNode previousNode = null;
+        ListNode nextNode;
 
-    /*
-     * копирование списка
+        while (currentNode != null) {
+            nextNode = currentNode.getNext();
+            currentNode.setNext(previousNode);
+            previousNode = currentNode;
+            currentNode = nextNode;
+        }
+
+        head = previousNode;
+    }
+
+    /**
+     * Копирование списка
      */
+    public ListNode copyLinkedList() {
+        if (head == null) {
+            return null;
+        }
 
+        ListNode originalCurrentNode = head;
+        ListNode newLinkedListHead = new ListNode(originalCurrentNode.getValue());
+        ListNode newCurrentNode = newLinkedListHead;
+
+        originalCurrentNode = originalCurrentNode.getNext();
+
+        while (originalCurrentNode != null) {
+            newCurrentNode.setNext(new ListNode(originalCurrentNode.getValue()));
+            newCurrentNode = newCurrentNode.getNext();
+            originalCurrentNode = originalCurrentNode.getNext();
+        }
+
+        return newLinkedListHead;
+    }
 }
