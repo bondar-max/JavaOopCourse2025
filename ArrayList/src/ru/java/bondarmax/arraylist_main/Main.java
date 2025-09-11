@@ -39,7 +39,7 @@ public class Main {
         ArrayList<String> list3 = new ArrayList<>(originalList);
         System.out.println("Скопированный список: " + list3 + NEW_LINE);
 
-        // Работы с итератором
+        // Работа с итератором
         System.out.println("--- Работа с итератором ---" + NEW_LINE);
         ArrayList<String> list4 = new ArrayList<>(Arrays.asList("Альфа", "Бета", "Гамма"));
         Iterator<String> iterator = list4.iterator();
@@ -123,5 +123,7 @@ public class Main {
 // Получаем подпоследовательность
         List<String> subList = list4.subList(0, list4.size());
         System.out.println("Подпоследовательность: " + subList);
+
+        list4.setIteratorExpectedModificationCount(5);
     }
 }
