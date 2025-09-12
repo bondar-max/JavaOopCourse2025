@@ -13,7 +13,7 @@ public class Main {
         System.out.printf("Количество колонок matrix1: %s%n", matrix1.getColumnsQuantity());
 
         // Создание матрицы из двумерного массива
-        double[][] array = {{1, 2,}, {3, 4, 5}};
+        double[][] array = {{1, 2}, {3, 4, 5}};
         Matrix matrix2 = new Matrix(array);
         System.out.printf("Матрица из массива:%n%s%n", matrix2);
 
@@ -30,7 +30,7 @@ public class Main {
         Matrix matrix5 = new Matrix(3, 3);
         Vector rowVector = new Vector(new double[]{7, 8, 9});
 
-        matrix5.setVectorRow(1, rowVector);
+        matrix5.setRow(1, rowVector);
 
         System.out.println("Матрица после установки вектора: " + matrix5);
 
@@ -43,8 +43,8 @@ public class Main {
         System.out.println("Разность: " + diff);
 
         // Транспонирование
-        Matrix transposed = matrix2.transpose();
-        System.out.println("Транспонированная matrix2: " + transposed);
+        matrix2.transpose();
+        System.out.println("Транспонированная matrix2: " + matrix2);
 
         // Умножение матрицы на вектор
         Vector vector = new Vector(new double[]{1, 2, 3});
@@ -62,22 +62,23 @@ public class Main {
         System.out.println("Произведение матриц 2x2: " + product);
 
         // Определитель
-        double determinant = matrix6.determinant();
+        double determinant = matrix6.calculateDeterminant();
         System.out.println("Определитель matrix6: " + determinant);
 
         // Получение строки и столбца
-        Vector row = matrix6.getVectorRow(0);
-        Vector column = matrix6.getVectorColumn(1);
+        Vector row = matrix6.getRow(0);
+        Vector column = matrix6.getColumn(1);
         System.out.println("Первая строка matrix6: " + row);
         System.out.println("Второй столбец matrix6: " + column);
 
         // Умножение матрицы на скаляр
-        Matrix scaled = new Matrix(matrix5);
-        scaled.multiply(2.0);
-        System.out.println("Матрица 5, умноженная на 2: " + scaled);
+        Matrix scaledMatrix = new Matrix(matrix5);
+        scaledMatrix.multiply(2.0);
+        System.out.println("Матрица 5, умноженная на 2: " + scaledMatrix);
+        System.out.println("Компонент матрицы 5: " + scaledMatrix.getComponent(0, 0));
 
         try {
-            matrix5.setVectorRow(5, new Vector(3));
+            matrix5.setRow(5, new Vector(3));
         } catch (IndexOutOfBoundsException e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
