@@ -5,64 +5,60 @@ import ru.java.bondarmax.list.SinglyLinkedList;
 public class Main {
     public static void main(String[] args) {
         // Создаем новый связный список
-        SinglyLinkedList list = new SinglyLinkedList();
+        SinglyLinkedList<Integer> list = new SinglyLinkedList<>();
 
         // Добавляем элементы в начало списка
-        list.insertElementAtStart(211);
-        list.insertElementAtStart(79);
-        list.insertElementAtStart(112);
-        list.insertElementAtStart(10);
-        list.insertElementAtStart(20);
-        list.insertElementAtStart(30);
+        list.insertAtStart(211);
+        list.insertAtStart(79);
+        list.insertAtStart(112);
+        list.insertAtStart(10);
+        list.insertAtStart(20);
+        list.insertAtStart(30);
 
         System.out.println("После добавления элементов в начало:");
         System.out.println(list);
 
         // Получаем размер списка
-        System.out.println("Размер списка: " + list.getLinkedListSize());
+        System.out.println("Размер списка: " + list.getSize());
 
         // Получаем первый элемент
-        System.out.println("Первый элемент: " + list.getFirstListElement());
-
-        // Получаем головной узел
-        System.out.println("Головной узел: " + list.getHead().getValue());
+        System.out.println("Первый элемент: " + list.getFirst());
 
         // Вставляем элемент по индексу
-        list.insertElementAtIndex(1, 25);
+        list.insertAtIndex(1, 25);
         System.out.println(System.lineSeparator() + "После вставки элемента 25 по индексу 1:");
         System.out.println(list);
 
         // Получаем элемент по индексу
-        System.out.println("Элемент по индексу 2: " + list.getElementByIndex(2));
+        System.out.println("Элемент по индексу 2: " + list.getByIndex(2));
 
         // Обновляем значение по индексу
-        System.out.println("Старое значение по индексу 1: " + list.updateElementValue(1, 99));
+        System.out.println("Старое значение по индексу 1: " + list.setByIndex(1, 99));
         System.out.println(System.lineSeparator() + "После обновления значения по индексу 1:");
         System.out.println(list);
 
         // Удаляем первый элемент
-        System.out.println("Удаленный первый элемент: " + list.removeFirstElement());
+        System.out.println("Удаленный первый элемент: " + list.removeFirst());
         System.out.println(System.lineSeparator() + "После удаления первого элемента:");
         System.out.println(list);
 
         // Удаляем элемент по индексу
-        System.out.println("Удаленный элемент по индексу 0: " + list.removeElementByIndex(0));
+        System.out.println("Удаленный элемент по индексу 0: " + list.removeByIndex(0));
         System.out.println(System.lineSeparator() + "После удаления элемента по индексу 0:");
         System.out.println(list);
 
         // Удаляем элемент по значению
-        System.out.println("Удален элемент 10: " + list.removeElementByValue(10));
+        System.out.println("Удален элемент 10: " + list.removeByValue(10));
         System.out.println(System.lineSeparator() + "После удаления элемента 10:");
         System.out.println(list);
 
         // Разворачиваем список
-        list.reverseLinkedList();
+        list.reverse();
         System.out.println(System.lineSeparator() + "После разворота списка:");
         System.out.println(list);
 
         // Копируем список
-        SinglyLinkedList copiedList = new SinglyLinkedList();
-        copiedList.setHead(list.copyLinkedList());
+        SinglyLinkedList<Integer> copiedList = list.copy();
         System.out.println(System.lineSeparator() + "Скопированный список:");
         System.out.println(copiedList);
     }
