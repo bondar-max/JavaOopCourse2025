@@ -28,10 +28,9 @@ public class Main {
         list2.add("Y");
         list2.add("Z");
         System.out.println("Список с начальной емкостью 5: " + list2);
-        System.out.println("Размер массива: " + list2.getElements().length);
         list2.trimToSize();
         System.out.println("После trimToSize: " + list2);
-        System.out.println("Размер массива после trimToSize: " + list2.getElements().length + NEW_LINE);
+        System.out.println("Размер массива после trimToSize: " + list2.size() + NEW_LINE);
 
         // Конструктор копирования
         System.out.println("--- Конструктор копирования ---" + NEW_LINE);
@@ -50,14 +49,14 @@ public class Main {
             iterator.next(); // Должно вызвать ConcurrentModificationException
         } catch (ConcurrentModificationException e) {
             System.out.println("Поймано исключение модификации: " + e.getMessage());
+
+            // Переинициализируем итератор после модификации коллекции
+            iterator = list4.iterator();
         }
 
         while (iterator.hasNext()) {
             System.out.println(iterator.next());
         }
-
-        // Выводим ожидаемый счетчик модификаций
-        System.out.println("Начальный ожидаемый счетчик: " + list4.getIteratorExpectedModificationCount());
 
         // Добавляем элементы
         list4.add("Последний");
@@ -86,16 +85,16 @@ public class Main {
         System.out.println("После замены элемента: " + list4);
         System.out.println("Старое значение: " + oldValue);
 
-// Удаляем элемент по индексу
+        // Удаляем элемент по индексу
         String removed = list4.remove(3);
         System.out.println("После удаления элемента: " + list4);
         System.out.println("Удаленный элемент: " + removed);
 
-// Удаляем все элементы коллекции
+        // Удаляем все элементы коллекции
         list4.removeAll(newElements);
         System.out.println("После удаления всех элементов newElements: " + list4);
 
-// Оставляем только указанные элементы
+        // Оставляем только указанные элементы
         list4.retainAll(Arrays.asList("Альфа", "Измененный"));
         System.out.println("После retainAll: " + list4);
 
@@ -106,7 +105,7 @@ public class Main {
             System.out.println("После очистки: " + list4);
         }
 
-// Используем итератор
+        // Используем итератор
         list4.addAll(Arrays.asList("A", "B", "C"));
         System.out.println(NEW_LINE + "Используем итератор:");
 
@@ -116,14 +115,12 @@ public class Main {
 
         System.out.println(NEW_LINE);
 
-// Преобразуем в массив
+        // Преобразуем в массив
         String[] array = list4.toArray(new String[0]);
         System.out.println("Массив: " + Arrays.toString(array));
 
-// Получаем подпоследовательность
+        // Получаем подпоследовательность
         List<String> subList = list4.subList(0, list4.size());
         System.out.println("Подпоследовательность: " + subList);
-
-        list4.setIteratorExpectedModificationCount(5);
     }
 }
