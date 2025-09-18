@@ -82,7 +82,7 @@ public class Matrix {
 
         for (Vector vector : sourceVectors) {
             if (vector == null) {
-                throw new NullPointerException("SourceVectors[vector] не может быть null");
+                throw new NullPointerException("Вектор в массиве sourceVectors не может быть null");
             }
 
             maxColumnsQuantity = Math.max(maxColumnsQuantity, vector.getSize());
@@ -119,22 +119,13 @@ public class Matrix {
      * Получение количества столбцов
      */
     public int getColumnsQuantity() {
-        if (rows.length == 0) {
-            return 0;
-        }
-
         return rows[0].getSize();
     }
 
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("{");
-
         int rowsQuantity = rows.length;
-
-        if (rowsQuantity == 0) {
-            return stringBuilder.append('}').toString();
-        }
 
         stringBuilder.append(rows[0]);
 
@@ -190,7 +181,7 @@ public class Matrix {
 
         for (int i = 0; i < rowsQuantity; i++) {
             Vector row = rows[i];
-            column[i] = (index < row.getSize()) ? row.getComponent(index) : 0.0;
+            column[i] = row.getComponent(index);
         }
 
         return new Vector(column);
@@ -200,18 +191,12 @@ public class Matrix {
      * Транспонирование матрицы
      */
     public void transpose() {
-        int rowsQuantity = getRowsQuantity();
         int columnsQuantity = getColumnsQuantity();
-
         Vector[] transposedMatrixRows = new Vector[columnsQuantity];
 
         for (int newRowIndex = 0; newRowIndex < columnsQuantity; newRowIndex++) {
-            transposedMatrixRows[newRowIndex] = new Vector(rowsQuantity);
-
-            for (int originalRowIndex = 0; originalRowIndex < rowsQuantity; originalRowIndex++) {
-                double value = newRowIndex < rows[originalRowIndex].getSize() ? rows[originalRowIndex].getComponent(newRowIndex) : 0.0;
-                transposedMatrixRows[newRowIndex].setComponent(originalRowIndex, value);
-            }
+            // Получаем столбец из исходной матрицы и используем его как строку в транспонированной
+            transposedMatrixRows[newRowIndex] = getColumn(newRowIndex);
         }
 
         rows = transposedMatrixRows;
@@ -230,7 +215,6 @@ public class Matrix {
      * Вычисляет определитель квадратной матрицы методом Гаусса (приведение к ступенчатому виду).
      */
     public double calculateDeterminant() {
-        final double EPSILON = 1e-12;
         int rowsQuantity = getRowsQuantity();
         int columnsQuantity = getColumnsQuantity();
 
@@ -239,12 +223,14 @@ public class Matrix {
         }
 
         if (rowsQuantity == 0) {
-            return 1.0;
+            throw new IllegalStateException("Определитель матрицы 0×0 не определён");
         }
 
         if (rowsQuantity == 1) {
             return rows[0].getComponent(0);
         }
+
+        final double EPSILON = 1e-12;
 
         // Создаём копию матрицы
         double[][] matrix = createMatrixArray();
@@ -309,7 +295,7 @@ public class Matrix {
 
         for (int rowIndex = 0; rowIndex < rowsQuantity; rowIndex++) {
             for (int columnIndex = 0; columnIndex < columnsQuantity; columnIndex++) {
-                result[rowIndex][columnIndex] = (columnIndex < rows[rowIndex].getSize()) ? rows[rowIndex].getComponent(columnIndex) : 0.0;
+                result[rowIndex][columnIndex] = rows[rowIndex].getComponent(columnIndex);
             }
         }
 
@@ -319,10 +305,10 @@ public class Matrix {
     /**
      * Меняет местами две строки в массиве
      */
-    private static void swapMatrixRows(double[][] matrix, int row1, int row2) {
-        double[] temp = matrix[row1];
-        matrix[row1] = matrix[row2];
-        matrix[row2] = temp;
+    private static void swapMatrixRows(double[][] matrix, int row1Index, int row2Index) {
+        double[] temp = matrix[row1Index];
+        matrix[row1Index] = matrix[row2Index];
+        matrix[row2Index] = temp;
     }
 
     /**
@@ -337,13 +323,8 @@ public class Matrix {
             throw new IndexOutOfBoundsException(String.format("Индекс столбца должен быть в диапазоне [0, %d]. Передано: %d", getColumnsQuantity() - 1, column));
         }
 
-        if (column >= rows[row].getSize()) {
-            throw new IndexOutOfBoundsException(String.format("В строке %d нет компонента с индексом %d", row, column));
-        }
-
         return rows[row].getComponent(column);
     }
-
 
     /**
      * Умножает эту матрицу на заданный вектор.
@@ -463,17 +444,15 @@ public class Matrix {
         // Основной цикл: result[i][j] = Σ left[i][k] * right[k][j]
         for (int rowIndex = 0; rowIndex < resultRowsQuantity; rowIndex++) {
             Vector leftRow = leftMatrix.rows[rowIndex];
-            int leftRowSize = leftRow.getSize();
 
-            for (int currentColumn = 0; currentColumn < resultColumnsQuantity; currentColumn++) {
+            for (int columnIndex = 0; columnIndex < resultColumnsQuantity; columnIndex++) {
                 double sum = 0.0;
 
                 for (int commonDimensionIndex = 0; commonDimensionIndex < commonDimension; commonDimensionIndex++) {
-                    sum += ((commonDimensionIndex < leftRowSize) ? leftRow.getComponent(commonDimensionIndex) : 0.0) *  // leftValue
-                            ((currentColumn < rightMatrix.rows[commonDimensionIndex].getSize()) ? rightMatrix.rows[commonDimensionIndex].getComponent(currentColumn) : 0.0); // rightValue
+                    sum += leftRow.getComponent(commonDimensionIndex) * rightMatrix.rows[commonDimensionIndex].getComponent(columnIndex);
                 }
 
-                multiplicationResult[rowIndex][currentColumn] = sum;
+                multiplicationResult[rowIndex][columnIndex] = sum;
             }
         }
 
@@ -490,14 +469,14 @@ public class Matrix {
             return false;
         }
 
-        Matrix other = (Matrix) obj;
+        Matrix comparingMatrix = (Matrix) obj;
 
-        if (getRowsQuantity() != other.getRowsQuantity() || getColumnsQuantity() != other.getColumnsQuantity()) {
+        if (getRowsQuantity() != comparingMatrix.getRowsQuantity() || getColumnsQuantity() != comparingMatrix.getColumnsQuantity()) {
             return false;
         }
 
         for (int i = 0; i < getRowsQuantity(); i++) {
-            if (!rows[i].equals(other.rows[i])) {
+            if (!rows[i].equals(comparingMatrix.rows[i])) {
                 return false;
             }
         }
@@ -508,11 +487,9 @@ public class Matrix {
     @Override
     public int hashCode() {
         int result = 17;
-        result = 31 * result + getRowsQuantity();
-        result = 31 * result + getColumnsQuantity();
 
         for (Vector row : rows) {
-            result = 31 * result + (row != null ? row.hashCode() : 0);
+            result = 31 * result + row.hashCode();
         }
 
         return result;
