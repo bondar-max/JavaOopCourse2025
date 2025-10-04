@@ -221,7 +221,7 @@ public class Matrix {
             throw new IllegalStateException("Определитель можно вычислить только для квадратной матрицы. Размер: " + rowsQuantity + "x" + columnsQuantity);
         }
 
-        if (rowsQuantity == 1) { 
+        if (rowsQuantity == 1) {
             return rows[0].getComponent(0);
         }
 
