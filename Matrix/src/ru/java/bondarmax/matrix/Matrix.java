@@ -10,7 +10,7 @@ public class Matrix {
      */
     public Matrix(int rowsQuantity, int columnsQuantity) {
         if (rowsQuantity <= 0 || columnsQuantity <= 0) {
-            throw new IllegalArgumentException("Размеры матрицы должны быть больше нуля. Передано: rows = " + rowsQuantity + ", columns = " + columnsQuantity);
+            throw new IllegalArgumentException("Размеры матрицы должны быть больше нуля. Передано: rowsQuantity = " + rowsQuantity + ", columnsQuantity = " + columnsQuantity);
         }
 
         rows = new Vector[rowsQuantity];
@@ -180,8 +180,7 @@ public class Matrix {
         double[] column = new double[rowsQuantity];
 
         for (int i = 0; i < rowsQuantity; i++) {
-            Vector row = rows[i];
-            column[i] = row.getComponent(index);
+            column[i] = rows[i].getComponent(index);
         }
 
         return new Vector(column);
@@ -220,10 +219,6 @@ public class Matrix {
 
         if (rowsQuantity != columnsQuantity) {
             throw new IllegalStateException("Определитель можно вычислить только для квадратной матрицы. Размер: " + rowsQuantity + "x" + columnsQuantity);
-        }
-
-        if (rowsQuantity == 0) {
-            throw new IllegalStateException("Определитель матрицы 0×0 не определён");
         }
 
         if (rowsQuantity == 1) {
@@ -469,14 +464,14 @@ public class Matrix {
             return false;
         }
 
-        Matrix comparingMatrix = (Matrix) obj;
+        Matrix matrix = (Matrix) obj;
 
-        if (getRowsQuantity() != comparingMatrix.getRowsQuantity() || getColumnsQuantity() != comparingMatrix.getColumnsQuantity()) {
+        if (getRowsQuantity() != matrix.getRowsQuantity() || getColumnsQuantity() != matrix.getColumnsQuantity()) {
             return false;
         }
 
         for (int i = 0; i < getRowsQuantity(); i++) {
-            if (!rows[i].equals(comparingMatrix.rows[i])) {
+            if (!rows[i].equals(matrix.rows[i])) {
                 return false;
             }
         }
@@ -486,12 +481,13 @@ public class Matrix {
 
     @Override
     public int hashCode() {
-        int result = 17;
+        final int PRIME = 31;
+        int hash = 1;
 
         for (Vector row : rows) {
-            result = 31 * result + row.hashCode();
+            hash = PRIME * hash + row.hashCode();
         }
 
-        return result;
+        return hash;
     }
 }
