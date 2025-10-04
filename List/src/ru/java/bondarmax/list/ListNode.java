@@ -1,6 +1,6 @@
 package ru.java.bondarmax.list;
 
-public class ListNode<E> {
+class ListNode<E> {
     private E value;
     private ListNode<E> next;
 

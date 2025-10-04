@@ -1,6 +1,7 @@
 package ru.java.bondarmax.list;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public class SinglyLinkedList<E> {
     private ListNode<E> head;
@@ -21,7 +22,7 @@ public class SinglyLinkedList<E> {
         return head.getValue();
     }
 
-    private ListNode<E> getNodeAt(int index) {
+    private ListNode<E> getNode(int index) {
         ListNode<E> currentNode = head;
 
         for (int i = 0; i < index; i++) {
@@ -33,13 +34,13 @@ public class SinglyLinkedList<E> {
 
     public E getByIndex(int index) {
         checkIndex(index);
-        return getNodeAt(index).getValue();
+        return getNode(index).getValue();
     }
 
     public E setByIndex(int index, E newValue) {
         checkIndex(index);
 
-        ListNode<E> node = getNodeAt(index);
+        ListNode<E> node = getNode(index);
         E oldValue = node.getValue();
         node.setValue(newValue);
         return oldValue;
@@ -52,17 +53,16 @@ public class SinglyLinkedList<E> {
             return removeFirst();
         }
 
-        ListNode<E> previousNode = getNodeAt(index - 1);
+        ListNode<E> previousNode = getNode(index - 1);
         ListNode<E> currentNode = previousNode.getNext();
 
-        E removedValue = currentNode.getValue();
         previousNode.setNext(currentNode.getNext());
         size--;
 
-        return removedValue;
+        return currentNode.getValue();
     }
 
-    public void insertAtStart(E newValue) {
+    public void insertFirst(E newValue) {
         head = new ListNode<>(newValue, head);
         size++;
     }
@@ -71,11 +71,19 @@ public class SinglyLinkedList<E> {
         checkIndex(index);
 
         if (index == 0) {
-            insertAtStart(newValue);
+            insertFirst(newValue);
             return;
         }
 
-        ListNode<E> previousNode = getNodeAt(index - 1);
+        if (index == size) {
+            ListNode<E> lastNode = getNode(size - 1);
+
+            lastNode.setNext(new ListNode<>(newValue));
+            size++;
+            return;
+        }
+
+        ListNode<E> previousNode = getNode(index - 1);
         previousNode.setNext(new ListNode<>(newValue, previousNode.getNext()));
         size++;
     }
@@ -85,16 +93,8 @@ public class SinglyLinkedList<E> {
             return false;
         }
 
-        if (targetValue == null) {
-            if (head.getValue() == null) {
-                removeFirst();
-                size--;
-                return true;
-            }
-        }
-
         // Если удаляем первый элемент
-        if (head.getValue().equals(targetValue)) {
+        if (Objects.equals(head.getValue(), targetValue)) {
             removeFirst();
             size--;
             return true;
@@ -104,7 +104,7 @@ public class SinglyLinkedList<E> {
         ListNode<E> currentNode = head.getNext();  // Следующий за головой
 
         while (currentNode != null) {
-            if (currentNode.getValue().equals(targetValue)) {
+            if (Objects.equals(currentNode.getValue(), targetValue)) {
                 // Удаляем текущий узел через предыдущий
                 previousNode.setNext(currentNode.getNext());
                 size--;
@@ -168,7 +168,7 @@ public class SinglyLinkedList<E> {
 
     @Override
     public String toString() {
-        if (head == null || size == 0) {
+        if (size == 0) {
             return "[]";
         }
 
@@ -180,10 +180,7 @@ public class SinglyLinkedList<E> {
             currentNode = currentNode.getNext();
         }
 
-        if (size > 0) {
-            stringBuilder.setLength(stringBuilder.length() - 2);
-        }
-
+        stringBuilder.setLength(stringBuilder.length() - 2);
         stringBuilder.append(']');
         return stringBuilder.toString();
     }

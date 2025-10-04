@@ -8,12 +8,12 @@ public class Main {
         SinglyLinkedList<Integer> list = new SinglyLinkedList<>();
 
         // Добавляем элементы в начало списка
-        list.insertAtStart(211);
-        list.insertAtStart(79);
-        list.insertAtStart(112);
-        list.insertAtStart(10);
-        list.insertAtStart(20);
-        list.insertAtStart(30);
+        list.insertFirst(211);
+        list.insertFirst(79);
+        list.insertFirst(112);
+        list.insertFirst(10);
+        list.insertFirst(20);
+        list.insertFirst(30);
 
         System.out.println("После добавления элементов в начало:");
         System.out.println(list);
