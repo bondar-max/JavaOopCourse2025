@@ -68,18 +68,12 @@ public class SinglyLinkedList<E> {
     }
 
     public void insertAtIndex(int index, E newValue) {
-        checkIndex(index);
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException(String.format("Index должен быть в диапазоне [0, %d]. Переданное значение: index = %d", size, index));
+        }
 
         if (index == 0) {
             insertFirst(newValue);
-            return;
-        }
-
-        if (index == size) {
-            ListNode<E> lastNode = getNode(size - 1);
-
-            lastNode.setNext(new ListNode<>(newValue));
-            size++;
             return;
         }
 
@@ -96,7 +90,6 @@ public class SinglyLinkedList<E> {
         // Если удаляем первый элемент
         if (Objects.equals(head.getValue(), targetValue)) {
             removeFirst();
-            size--;
             return true;
         }
 
