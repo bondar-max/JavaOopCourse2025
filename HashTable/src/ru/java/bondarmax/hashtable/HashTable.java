@@ -146,6 +146,7 @@ public class HashTable<E> implements Collection<E> {
      * @param e добавляемый элемент
      * @return true, если элемент успешно добавлен
      */
+    @SuppressWarnings("DataFlowIssue")
     @Override
     public boolean add(E e) {
         if (e == null) {
