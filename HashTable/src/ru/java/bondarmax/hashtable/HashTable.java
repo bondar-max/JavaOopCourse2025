@@ -290,6 +290,21 @@ public class HashTable<E> implements Collection<E> {
     }
 
     /**
+     * Возвращает строковое представление хеш-таблицы.
+     *
+     * @return строковое представление в формате [элемент1, элемент2, ...]
+     */
+    @Override
+    public String toString() {
+        if (size == 0) {
+            return "[]";
+        }
+
+        Object[] array = toArray();
+        return Arrays.toString(array);
+    }
+
+    /**
      * Возвращает итератор для перебора элементов коллекции.
      *
      * @return итератор коллекции

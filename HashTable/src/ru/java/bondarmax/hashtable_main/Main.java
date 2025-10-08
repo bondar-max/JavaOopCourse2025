@@ -120,5 +120,18 @@ public class Main {
         // Проверка очистки уже пустой таблицы
         emptyTable.clear();
         System.out.println("Размер после очистки пустой таблицы: " + 0);
+
+        System.out.println(lineSeparator + "=== Тестирование toString ===");
+
+        HashTable<String> table = new HashTable<>();
+        System.out.println("Пустая: " + table);
+
+        table.add("Ананас");
+        table.add("Клубника");
+        table.add("Дыня");
+        System.out.println("После добавления: " + table);
+
+        table.remove("Дыня");
+        System.out.println("После удаления 'Дыня': " + table);
     }
 }
