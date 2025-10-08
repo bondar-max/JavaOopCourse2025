@@ -1,16 +1,17 @@
 package ru.java.bondarmax.hashtable;
 
 import java.util.*;
+import java.lang.reflect.Array;
 
 public class HashTable<E> implements Collection<E> {
     // Поле для хранения массива списков элементов
-    private final List<List<E>> hashBuckets;
+    private final List<E>[] buckets;
 
     // Поле для хранения текущего размера коллекции
-    private int currentSize;
+    private int size;
 
     // Константа для размера по умолчанию
-    private static final int DEFAULT_HASH_TABLE_CAPACITY = 16;
+    private static final int DEFAULT_CAPACITY = 16;
 
     /**
      * Конструктор для создания хеш-таблицы с заданной начальной ёмкостью.
@@ -18,34 +19,32 @@ public class HashTable<E> implements Collection<E> {
      * @param initialCapacity начальная ёмкость хеш-таблицы
      */
     public HashTable(int initialCapacity) {
-        hashBuckets = new ArrayList<>(initialCapacity);
 
-        for (int i = 0; i < initialCapacity; i++) {
-            hashBuckets.add(new LinkedList<>());
+        // Проверка аргумента на корректность
+        if (initialCapacity <= 0) {
+            throw new IllegalArgumentException("Initial capacity должен быть положительным, передано: " + initialCapacity);
         }
 
-        currentSize = 0;
+        // Создаем массив, но НЕ инициализируем все ячейки сразу
+        //noinspection unchecked
+        buckets = (List<E>[]) new List[initialCapacity];
     }
 
     /**
      * Конструктор по умолчанию, создающий хеш-таблицу с начальной ёмкостью 16.
      */
     public HashTable() {
-        this(DEFAULT_HASH_TABLE_CAPACITY);
+        this(DEFAULT_CAPACITY);
     }
 
     /**
-     * Вычисляет хеш-код для элемента.
+     * Вычисляет индекс корзины для элемента.
      *
-     * @param e элемент для вычисления хеш-кода
-     * @return индекс для хранения элемента
+     * @param element элемент для вычисления индекса
+     * @return индекс корзины для хранения элемента
      */
-    private int hash(E e) {
-        if (hashBuckets.isEmpty()) {
-            return 0;
-        }
-
-        return Math.abs(e.hashCode()) % hashBuckets.size();
+    private int getBucketIndex(E element) {
+        return Math.abs(element.hashCode()) % buckets.length;
     }
 
     /**
@@ -55,7 +54,7 @@ public class HashTable<E> implements Collection<E> {
      */
     @Override
     public int size() {
-        return currentSize;
+        return size;
     }
 
     /**
@@ -65,7 +64,7 @@ public class HashTable<E> implements Collection<E> {
      */
     @Override
     public boolean isEmpty() {
-        return currentSize == 0;
+        return size == 0;
     }
 
     /**
@@ -76,13 +75,15 @@ public class HashTable<E> implements Collection<E> {
      */
     @Override
     public boolean contains(Object o) {
-        for (List<E> bucket : hashBuckets) {
-            if (bucket.contains(o)) {
-                return true;
-            }
+        if (o == null) {
+            throw new NullPointerException("Элемент не может быть null");
         }
 
-        return false;
+        // Вычисляем индекс корзины на основе хеш-кода объекта
+        int index = Math.abs(o.hashCode()) % buckets.length;
+
+        // Проверяем только нужную корзину
+        return buckets[index] != null && buckets[index].contains(o);
     }
 
     /**
@@ -92,17 +93,21 @@ public class HashTable<E> implements Collection<E> {
      */
     @Override
     public Object[] toArray() {
-        Object[] array = new Object[currentSize];
-        int index = 0;
+        Object[] array = new Object[size];
+        int i = 0;
 
-        for (List<E> bucket : hashBuckets) {
-            for (E element : bucket) {
-                array[index++] = element;
+        for (List<E> bucket : buckets) {
+            if (bucket != null) {
+                for (E element : bucket) {
+                    array[i] = element;
+                    i++;
+                }
             }
         }
 
         return array;
     }
+
 
     /**
      * Преобразует коллекцию в массив заданного типа.
@@ -112,23 +117,26 @@ public class HashTable<E> implements Collection<E> {
      */
     @Override
     public <T> T[] toArray(T[] a) {
-        if (a.length < currentSize) {
+        if (a.length < size) {
             //noinspection unchecked
-            a = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), currentSize);
+            a = (T[]) Array.newInstance(a.getClass().getComponentType(), size);
         }
 
-        int index = 0;
+        int i = 0;
 
-        for (List<E> bucket : hashBuckets) {
-            for (E element : bucket) {
-                //noinspection unchecked
-                a[index++] = (T) element;
+        for (List<E> bucket : buckets) {
+            if (bucket != null) {
+                for (E element : bucket) {
+                    //noinspection unchecked
+                    a[i] = (T) element;
+                    i++;
+                }
             }
         }
-
-        if (a.length > currentSize) {
-            a[currentSize] = null;
+        if (a.length > size) {
+            a[size] = null;
         }
+
         return a;
     }
 
@@ -140,10 +148,18 @@ public class HashTable<E> implements Collection<E> {
      */
     @Override
     public boolean add(E e) {
-        int index = hash(e);
-        hashBuckets.get(index).add(e);
-        currentSize++;
+        if (e == null) {
+            throw new NullPointerException("Элемент не может быть null");
+        }
 
+        int index = getBucketIndex(e);
+
+        if (buckets[index] == null) {
+            buckets[index] = new LinkedList<>();
+        }
+
+        buckets[index].add(e);
+        size++;
         return true;
     }
 
@@ -155,11 +171,17 @@ public class HashTable<E> implements Collection<E> {
      */
     @Override
     public boolean remove(Object o) {
-        for (List<E> bucket : hashBuckets) {
-            if (bucket.remove(o)) {
-                currentSize--;
-                return true;
-            }
+        if (o == null) {
+            throw new NullPointerException("Элемент не может быть null");
+        }
+
+        // Вычисляем индекс корзины на основе хеш-кода объекта
+        int index = Math.abs(o.hashCode()) % buckets.length;
+
+        // Удаляем только из нужной корзины
+        if (buckets[index] != null && buckets[index].remove(o)) {
+            size--;
+            return true;
         }
 
         return false;
@@ -190,15 +212,14 @@ public class HashTable<E> implements Collection<E> {
      */
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        boolean modified = false;
+        boolean isModified = false;
 
         for (E e : c) {
-            if (add(e)) {
-                modified = true;
-            }
+            add(e);
+            isModified = true;
         }
 
-        return modified;
+        return isModified;
     }
 
     /**
@@ -209,15 +230,20 @@ public class HashTable<E> implements Collection<E> {
      */
     @Override
     public boolean removeAll(Collection<?> c) {
-        boolean modified = false;
+        boolean isModified = false;
 
-        for (Object o : c) {
-            if (remove(o)) {
-                modified = true;
+        for (List<E> bucket : buckets) {
+            if (bucket != null && !bucket.isEmpty()) {
+                int initialSize = bucket.size();
+
+                if (bucket.removeAll(c)) {
+                    size -= (initialSize - bucket.size());
+                    isModified = true;
+                }
             }
         }
 
-        return modified;
+        return isModified;
     }
 
     /**
@@ -228,21 +254,20 @@ public class HashTable<E> implements Collection<E> {
      */
     @Override
     public boolean retainAll(Collection<?> c) {
-        boolean modified = false;
+        boolean isModified = false;
 
-        for (List<E> bucket : hashBuckets) {
-            for (Iterator<E> iterator = bucket.iterator(); iterator.hasNext(); ) {
-                E element = iterator.next();
+        for (List<E> bucket : buckets) {
+            if (bucket != null && !bucket.isEmpty()) {
+                int initialBucketSize = bucket.size();
 
-                if (!c.contains(element)) {
-                    iterator.remove();
-                    currentSize--;
-                    modified = true;
+                if (bucket.retainAll(c)) {
+                    size -= (initialBucketSize - bucket.size());
+                    isModified = true;
                 }
             }
         }
 
-        return modified;
+        return isModified;
     }
 
     /**
@@ -250,11 +275,17 @@ public class HashTable<E> implements Collection<E> {
      */
     @Override
     public void clear() {
-        for (List<E> bucket : hashBuckets) {
-            bucket.clear();
+        if (size == 0) {
+            return;
         }
 
-        currentSize = 0;
+        for (List<E> bucket : buckets) {
+            if (bucket != null) {
+                bucket.clear();
+            }
+        }
+
+        size = 0;
     }
 
     /**
@@ -265,26 +296,40 @@ public class HashTable<E> implements Collection<E> {
     @Override
     public Iterator<E> iterator() {
         return new Iterator<>() {
-            private int bucketIndex = 0;
+            private int bucketIndex;
             private Iterator<E> currentIterator;
+
+            private void findNextBucket() {
+                // Ищем следующую непустую корзину
+                while (bucketIndex < buckets.length) {
+                    List<E> bucket = buckets[bucketIndex];
+                    if (bucket != null && !bucket.isEmpty()) {
+                        currentIterator = bucket.iterator();
+                        return;
+                    }
+                    bucketIndex++;
+                }
+                currentIterator = null;
+            }
 
             @Override
             public boolean hasNext() {
-                while (bucketIndex < hashBuckets.size()) {
-                    if (currentIterator == null) {
-                        currentIterator = hashBuckets.get(bucketIndex).iterator();
-                    }
-                    if (currentIterator.hasNext()) {
-                        return true;
-                    }
-                    currentIterator = null;
-                    bucketIndex++;
+                // Если текущий итератор существует и есть следующий элемент
+                if (currentIterator != null && currentIterator.hasNext()) {
+                    return true;
                 }
-                return false;
+
+                bucketIndex++; // Переходим к следующей корзине
+                findNextBucket();
+
+                return currentIterator != null;
             }
 
             @Override
             public E next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException("Нет больше элементов в коллекции");
+                }
                 return currentIterator.next();
             }
         };

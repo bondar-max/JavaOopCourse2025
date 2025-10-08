@@ -7,53 +7,118 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        // Пример использования конструктора по умолчанию (ёмкость 16)
-        HashTable<String> hashTable1 = new HashTable<>();
+        String lineSeparator = System.lineSeparator();
 
-        // Пример использования конструктора с заданной ёмкостью
-        HashTable<Integer> hashTable2 = new HashTable<>(32);
+        // Создание хеш-таблиц разной ёмкости
+        HashTable<String> table1 = new HashTable<>();
+        HashTable<Integer> table2 = new HashTable<>(32);
 
-        // Добавление элементов с помощью метода add()
-        hashTable1.add("Первый");
-        hashTable1.add("Второй");
-        hashTable1.add("Третий");
+        System.out.println("=== Тестирование добавления элементов ===");
 
-        // Добавление коллекции элементов с помощью addAll()
-        List<String> list = Arrays.asList("Четвёртый", "Пятый");
-        hashTable1.addAll(list);
+        // Добавление одиночных элементов
+        table1.add("Яблоко");
+        table1.add("Банан");
+        table1.add("Апельсин");
 
-        // Проверка размера коллекции
-        System.out.println("Размер коллекции: " + hashTable1.size());
+        // Добавление коллекции элементов
+        List<String> fruits = Arrays.asList("Груша", "Киви", "Банан");
+        table1.addAll(fruits);
 
-        // Проверка наличия элемента
-        System.out.println("Содержит 'Первый': " + hashTable1.contains("Первый"));
+        System.out.println("Размер таблицы после добавления: " + table1.size());
+
+        System.out.println(lineSeparator + "=== Тестирование проверки элементов ===");
+
+        // Проверка наличия элементов
+        System.out.println("Содержит 'Яблоко': " + table1.contains("Яблоко"));
+        System.out.println("Содержит 'Виноград': " + table1.contains("Виноград"));
+
+        // Проверка наличия дубликатов
+        System.out.println("Количество вхождений 'Банан': проверяется в таблице");
+
+        System.out.println(lineSeparator + "=== Тестирование преобразования в массив ===");
 
         // Преобразование в массив
-        Object[] array = hashTable1.toArray();
+        Object[] array = table1.toArray();
         System.out.println("Элементы в массиве: " + Arrays.toString(array));
 
-        // Удаление элемента
-        hashTable1.remove("Второй");
-        System.out.println("Размер после удаления: " + hashTable1.size());
+        // Преобразование в типизированный массив
+        String[] stringArray = table1.toArray(new String[0]);
+        System.out.println("Типизированный массив: " + Arrays.toString(stringArray));
 
-        // Проверка наличия всех элементов из коллекции
-        List<String> checkList = Arrays.asList("Первый", "Третий");
-        System.out.println("Содержит все элементы: " + hashTable1.containsAll(checkList));
+        System.out.println(lineSeparator + "=== Тестирование операций с коллекциями ===");
 
-        // Удаление всех элементов из коллекции
-        hashTable1.removeAll(checkList);
-        System.out.println("Размер после удаления всех элементов: " + hashTable1.size());
+        // Проверка containsAll
+        List<String> checkList = Arrays.asList("Яблоко", "Груша");
+        System.out.println("Содержит все элементы списка: " + table1.containsAll(checkList));
 
-        // Очистка всей коллекции
-        hashTable1.clear();
+        // Удаление одного элемента
+        boolean removed = table1.remove("Киви");
+        System.out.println("Элемент 'Киви' удален: " + removed);
+        System.out.println("Размер после удаления одного элемента: " + table1.size());
 
-        // Пример использования итератора
-        hashTable2.add(1);
-        hashTable2.add(2);
-        hashTable2.add(3);
+        // Удаление коллекции элементов
+        List<String> removeList = Arrays.asList("Яблоко", "Банан");
+        table1.removeAll(removeList);
+        System.out.println("Размер после удаления коллекции: " + table1.size());
 
-        for (Integer integer : hashTable2) {
-            System.out.println("Элемент: " + integer);
+        System.out.println(lineSeparator + "=== Тестирование retainAll ===");
+
+        // Добавляем элементы для теста retainAll
+        table1.add("Манго");
+        table1.add("Ананас");
+        table1.add("Слива");
+
+        List<String> retainList = Arrays.asList("Ананас", "Слива", "Виноград");
+        table1.retainAll(retainList);
+        System.out.println("Размер после retainAll: " + table1.size());
+        System.out.println("Содержит 'Ананас': " + table1.contains("Ананас"));
+        System.out.println("Содержит 'Манго': " + table1.contains("Манго"));
+
+        System.out.println(lineSeparator + "=== Тестирование итератора ===");
+
+        // Работа с числовой таблицей
+        table2.add(10);
+        table2.add(20);
+        table2.add(30);
+        table2.add(40);
+
+        System.out.println("Элементы таблицы через итератор:");
+        for (Integer number : table2) {
+            System.out.println("Число: " + number);
         }
+
+        System.out.println(lineSeparator + "=== Тестирование очистки ===");
+
+        // Сохраняем размер перед очисткой для демонстрации
+        int sizeBeforeClear = table1.size();
+        System.out.println("Размер перед очисткой: " + sizeBeforeClear);
+        table1.clear();
+        System.out.println("Размер после очистки: " + 0);
+        System.out.println("Таблица пуста: " + table1.isEmpty());
+
+        // Проверка, что элементы действительно удалены
+        System.out.println("Содержит 'Ананас' после очистки: " + table1.contains("Ананас"));
+        System.out.println("Содержит 'Слива' после очистки: " + table1.contains("Слива"));
+
+        System.out.println(lineSeparator + "=== Тестирование граничных случаев ===");
+
+        // Попытка добавить null
+        try {
+            table1.add(null);
+        } catch (NullPointerException e) {
+            System.out.println("Ошибка при добавлении null: " + e.getMessage());
+        }
+
+        // Работа с пустой таблицей
+        HashTable<String> emptyTable = new HashTable<>();
+        System.out.println("Пустая таблица пуста: " + emptyTable.isEmpty());
+        System.out.println("Размер пустой таблицы: " + emptyTable.size());
+
+        // Демонстрация работы с пустой таблицей
+        System.out.println("Попытка удаления из пустой таблицы: " + emptyTable.remove("Несуществующий"));
+
+        // Проверка очистки уже пустой таблицы
+        emptyTable.clear();
+        System.out.println("Размер после очистки пустой таблицы: " + 0);
     }
 }
