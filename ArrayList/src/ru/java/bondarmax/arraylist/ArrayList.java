@@ -232,10 +232,7 @@ public class ArrayList<E> implements List<E> {
             return false;
         }
 
-        // Создаем безопасно типизированный массив
-        //noinspection unchecked
-        E[] collectionArray = (E[]) collection.toArray();
-        int addedElementsCount = collectionArray.length;
+        int addedElementsCount = collection.size();
         int expectedFinalSize = size + addedElementsCount;
 
         ensureCapacity(expectedFinalSize);
@@ -245,8 +242,13 @@ public class ArrayList<E> implements List<E> {
             System.arraycopy(elements, index, elements, index + addedElementsCount, size - index);
         }
 
-        // Копируем элементы из коллекции
-        System.arraycopy(collectionArray, 0, elements, index, addedElementsCount);
+        // Копируем элементы из коллекции напрямую
+        int i = index;
+
+        for (E element : collection) {
+            elements[i] = element;
+            i++;
+        }
 
         size = expectedFinalSize;
         modificationCount++;
@@ -452,10 +454,7 @@ public class ArrayList<E> implements List<E> {
         }
 
         for (int i = 0; i < size; i++) {
-            Object thisElement = elements[i];
-            Object otherElement = otherList.elements[i];
-
-            if (!Objects.equals(thisElement, otherElement)) {
+            if (!Objects.equals(elements[i], otherList.elements[i])) {
                 return false;
             }
         }
@@ -469,8 +468,8 @@ public class ArrayList<E> implements List<E> {
         int hash = 1;
 
         for (int i = 0; i < size; i++) {
-            Object obj = elements[i];
-            hash = PRIME * hash + (obj == null ? 0 : obj.hashCode());
+            Object element = elements[i];
+            hash = PRIME * hash + (element == null ? 0 : element.hashCode());
         }
 
         return hash;
@@ -525,10 +524,10 @@ public class ArrayList<E> implements List<E> {
                 throw new NoSuchElementException("Достигнут конец списка");
             }
 
-            E nextElement = elements[currentIndex];
+            E currentElement = elements[currentIndex];
             currentIndex++;
 
-            return nextElement;
+            return currentElement;
         }
     }
 }
