@@ -7,6 +7,9 @@ public class HashTable<E> implements Collection<E> {
     // Поле для хранения массива списков элементов
     private final List<E>[] buckets;
 
+    // Счетчик изменений коллекции
+    private int modCount;
+
     // Поле для хранения текущего размера коллекции
     private int size;
 
@@ -77,19 +80,7 @@ public class HashTable<E> implements Collection<E> {
     public boolean contains(Object o) {
         int index = getBucketIndex(o);
 
-        if (o == null) {
-            if (buckets[index] != null) {
-                for (E element : buckets[index]) {
-                    if (element == null) {
-                        return true;
-                    }
-                }
-            }
-        } else {
-            return buckets[index] != null && buckets[index].contains(o);
-        }
-
-        return false;
+        return buckets[index] != null && buckets[index].contains(o);
     }
 
     /**
@@ -139,6 +130,7 @@ public class HashTable<E> implements Collection<E> {
                 }
             }
         }
+
         if (a.length > size) {
             a[size] = null;
         }
@@ -162,6 +154,7 @@ public class HashTable<E> implements Collection<E> {
 
         buckets[index].add(e);
         size++;
+        modCount++;
         return true;
     }
 
@@ -175,23 +168,10 @@ public class HashTable<E> implements Collection<E> {
     public boolean remove(Object o) {
         int index = getBucketIndex(o);
 
-        if (buckets[index] != null) {
-            // Для null элементов используем специальное удаление
-            if (o == null) {
-                // Удаляем первое вхождение null
-                boolean isRemoved = buckets[index].remove(null);
-
-                if (isRemoved) {
-                    size--;
-                }
-
-                return isRemoved;
-            } else {
-                if (buckets[index].remove(o)) {
-                    size--;
-                    return true;
-                }
-            }
+        if (buckets[index] != null && buckets[index].remove(o)) {
+            size--;
+            modCount++;
+            return true;
         }
 
         return false;
@@ -243,15 +223,13 @@ public class HashTable<E> implements Collection<E> {
     public boolean removeAll(Collection<?> c) {
         boolean isModified = false;
 
-        for (Object element : c) {
-            int index = getBucketIndex(element);
+        for (List<E> bucket : buckets) {
+            if (bucket != null && !bucket.isEmpty()) {
+                int initialSize = bucket.size();
 
-            if (buckets[index] != null) {
-                int initialSize = buckets[index].size();
-
-                // Удаляем все вхождения одного элемента
-                if (buckets[index].removeAll(Collections.singleton(element))) {
-                    size -= (initialSize - buckets[index].size());
+                if (bucket.removeAll(c)) {
+                    size -= (initialSize - bucket.size());
+                    modCount++;
                     isModified = true;
                 }
             }
@@ -276,6 +254,7 @@ public class HashTable<E> implements Collection<E> {
 
                 if (bucket.retainAll(c)) {
                     size -= (initialBucketSize - bucket.size());
+                    modCount++;
                     isModified = true;
                 }
             }
@@ -300,6 +279,7 @@ public class HashTable<E> implements Collection<E> {
         }
 
         size = 0;
+        modCount++;
     }
 
     /**
@@ -316,19 +296,15 @@ public class HashTable<E> implements Collection<E> {
         StringBuilder sb = new StringBuilder();
         sb.append('[');
 
-        boolean firstElement = true;
+        boolean isFirstElement = true;
 
-        for (List<E> bucket : buckets) {
-            if (bucket == null) continue;
-
-            for (E element : bucket) {
-                if (!firstElement) {
-                    sb.append(", ");
-                }
-
-                sb.append(element);
-                firstElement = false;
+        for (E element : this) {
+            if (!isFirstElement) {
+                sb.append(", ");
             }
+
+            sb.append(element);
+            isFirstElement = false;
         }
 
         sb.append(']');
@@ -342,66 +318,71 @@ public class HashTable<E> implements Collection<E> {
      */
     @Override
     public Iterator<E> iterator() {
-        return new Iterator<>() {
-            private int bucketIndex;
-            private Iterator<E> currentIterator;
-            private final int expectedModCount = size;
+        return new HashTableIterator();
+    }
 
-            {
+    private class HashTableIterator implements Iterator<E> {
+        private int bucketIndex;
+        private Iterator<E> currentIterator;
+        private final int expectedModCount;
+
+        public HashTableIterator() {
+            expectedModCount = modCount;
+            findNextBucket();
+        }
+
+        private void findNextBucket() {
+            // Ищем следующую непустую корзину
+            int i = bucketIndex;
+
+            while (i < buckets.length) {
+                List<E> bucket = buckets[i];
+
+                if (bucket != null && !bucket.isEmpty()) {
+                    // нашли непустую корзину
+                    currentIterator = bucket.iterator(); // Создаем итератор для этой корзины
+                    bucketIndex = i; // Запоминаем позицию
+                    return;
+                }
+
+                i++;
+            }
+
+            currentIterator = null;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (currentIterator != null && currentIterator.hasNext()) {
+                return true;
+            }
+
+            if (bucketIndex < buckets.length) {
+                bucketIndex++;
                 findNextBucket();
             }
 
-            private void findNextBucket() {
-                // Ищем следующую непустую корзину
-                int searchIndex = bucketIndex;
+            return currentIterator != null && currentIterator.hasNext();
+        }
 
-                while (searchIndex < buckets.length) {
-                    List<E> bucket = buckets[searchIndex];
-
-                    if (bucket != null && !bucket.isEmpty()) {
-                        // нашли непустую корзину
-                        currentIterator = bucket.iterator(); // Создаем итератор для этой корзины
-                        bucketIndex = searchIndex; // Запоминаем позицию
-                        return;
-                    }
-
-                    searchIndex++;
-                }
-
-                currentIterator = null;
+        @Override
+        public E next() {
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException("Коллекция была изменена во время итерации");
             }
 
-            @Override
-            public boolean hasNext() {
-                checkForModification();
-
-                return currentIterator != null && currentIterator.hasNext();
+            if (!hasNext()) {
+                throw new NoSuchElementException("Нет больше элементов в коллекции");
             }
 
-            @Override
-            public E next() {
-                checkForModification();
+            E element = currentIterator.next();
 
-                if (!hasNext()) {
-                    throw new NoSuchElementException("Нет больше элементов в коллекции");
-                }
-
-                E element = currentIterator.next();
-
-                // Переход к следующему элементу/корзине
-                if (!currentIterator.hasNext()) {
-                    bucketIndex++;
-                    findNextBucket();
-                }
-
-                return element;
+            if (!currentIterator.hasNext()) {
+                bucketIndex++;
+                findNextBucket();
             }
 
-            private void checkForModification() {
-                if (size != expectedModCount) {
-                    throw new ConcurrentModificationException("Коллекция была изменена во время итерации");
-                }
-            }
-        };
+            return element;
+        }
     }
 }
