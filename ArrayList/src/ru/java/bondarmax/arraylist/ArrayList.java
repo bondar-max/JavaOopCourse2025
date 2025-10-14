@@ -7,7 +7,7 @@ public class ArrayList<E> implements List<E> {
 
     private E[] elements; // Массив для хранения элементов
     private int size; // Текущий размер списка
-    private int modificationCount; // Счетчик модификаций
+    private int modificationsCount; // Счетчик модификаций
 
     /**
      * Конструктор по умолчанию
@@ -153,7 +153,7 @@ public class ArrayList<E> implements List<E> {
         increaseCapacity();
         elements[size] = element;
         size++;
-        modificationCount++;
+        modificationsCount++;
 
         return true;
     }
@@ -189,7 +189,7 @@ public class ArrayList<E> implements List<E> {
         // Обнуляем последний элемент
         size--;
         elements[size] = null;
-        modificationCount++;
+        modificationsCount++;
     }
 
     /**
@@ -251,7 +251,7 @@ public class ArrayList<E> implements List<E> {
         }
 
         size = expectedFinalSize;
-        modificationCount++;
+        modificationsCount++;
 
         return true;
     }
@@ -307,7 +307,7 @@ public class ArrayList<E> implements List<E> {
 
         Arrays.fill(elements, 0, size, null);
         size = 0;
-        modificationCount++;
+        modificationsCount++;
     }
 
     /**
@@ -354,7 +354,7 @@ public class ArrayList<E> implements List<E> {
         elements[index] = element;
 
         size++;
-        modificationCount++;
+        modificationsCount++;
     }
 
     /**
@@ -501,7 +501,7 @@ public class ArrayList<E> implements List<E> {
 
     private class ArrayListIterator implements Iterator<E> {
         private int currentIndex;
-        private final int expectedModificationsCount = modificationCount;  // Сохраняем текущее состояние модификаций
+        private final int expectedModificationsCount = modificationsCount;  // Сохраняем текущее состояние модификаций
 
         /**
          * Проверяет, есть ли еще элементы для перебора
@@ -516,7 +516,7 @@ public class ArrayList<E> implements List<E> {
          */
         @Override
         public E next() {
-            if (modificationCount != expectedModificationsCount) {
+            if (modificationsCount != expectedModificationsCount) {
                 throw new ConcurrentModificationException("Список был изменен во время итерации");
             }
 
