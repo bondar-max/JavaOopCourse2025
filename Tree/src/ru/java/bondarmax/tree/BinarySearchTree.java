@@ -15,13 +15,14 @@ public class BinarySearchTree<T extends Comparable<T>> {
      * @throws IllegalArgumentException если передан null
      */
     @SuppressWarnings("DataFlowIssue")
-    public void insert(T data) {
+    public boolean insert(T data) {
         if (data == null) {
             throw new IllegalArgumentException("Нельзя вставлять null значения");
         }
 
+        int oldSize = size;
         root = insertRecursive(root, data);
-        size++;
+        return size > oldSize;
     }
 
     /**
@@ -33,6 +34,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
      */
     private TreeNode<T> insertRecursive(TreeNode<T> node, T data) {
         if (node == null) {
+            size++;
             return new TreeNode<>(data);
         }
 
@@ -59,7 +61,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
             throw new IllegalArgumentException("Нельзя искать null значения");
         }
 
-        return containsRecursive(root, data);
+        return containsRecursively(root, data);
     }
 
     /**
@@ -69,7 +71,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
      * @param data искомый элемент
      * @return true если элемент найден в поддереве
      */
-    private boolean containsRecursive(TreeNode<T> node, T data) {
+    private boolean containsRecursively(TreeNode<T> node, T data) {
         if (node == null) {
             return false;
         }
@@ -77,9 +79,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
         if (data.compareTo(node.data) == 0) {
             return true;
         } else if (data.compareTo(node.data) < 0) {
-            return containsRecursive(node.left, data);
+            return containsRecursively(node.left, data);
         } else {
-            return containsRecursive(node.right, data);
+            return containsRecursively(node.right, data);
         }
     }
 
@@ -97,7 +99,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
         }
 
         int initialSize = size;
-        root = removeRecursive(root, data);
+        root = removeRecursively(root, data);
         return size != initialSize;
     }
 
@@ -109,15 +111,15 @@ public class BinarySearchTree<T extends Comparable<T>> {
      * @param data элемент для удаления
      * @return новый корень поддерева после удаления
      */
-    private TreeNode<T> removeRecursive(TreeNode<T> node, T data) {
+    private TreeNode<T> removeRecursively(TreeNode<T> node, T data) {
         if (node == null) {
             return null;
         }
 
         if (data.compareTo(node.data) < 0) {
-            node.left = removeRecursive(node.left, data);
+            node.left = removeRecursively(node.left, data);
         } else if (data.compareTo(node.data) > 0) {
-            node.right = removeRecursive(node.right, data);
+            node.right = removeRecursively(node.right, data);
         } else {
             // Узел найден
             size--;
@@ -130,10 +132,10 @@ public class BinarySearchTree<T extends Comparable<T>> {
             }
 
             // Случай 2: узел с двумя детьми.
-            // Находим минимальный элемент в правом поддереве (преемника in-order)
-            node.data = findMin(node.right).data;
+            // Находим минимальный элемент в правом поддереве (преемника)
+            node.data = findMinimumNode(node.right).data;
             // Удаляем минимальный элемент из правого поддерева
-            node.right = removeRecursive(node.right, node.data);
+            node.right = removeRecursively(node.right, node.data);
             size++; // компенсируем уменьшение размера при рекурсивном удалении
         }
 
@@ -146,7 +148,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
      * @param node корень поддерева для поиска
      * @return узел с минимальным значением в поддереве
      */
-    private TreeNode<T> findMin(TreeNode<T> node) {
+    private TreeNode<T> findMinimumNode(TreeNode<T> node) {
         while (node.left != null) {
             node = node.left;
         }
@@ -178,7 +180,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
      *
      * @return список элементов в порядке обхода в ширину
      */
-    public List<T> breadthFirstTraversal() {
+    public List<T> traverseByLevelOrder() {
         List<T> result = new ArrayList<>();
 
         if (root == null) {
@@ -210,24 +212,24 @@ public class BinarySearchTree<T extends Comparable<T>> {
      *
      * @return список элементов в порядке прямого обхода
      */
-    public List<T> depthFirstTraversalRecursive() {
+    public List<T> traversePreOrderWithRecursion() {
         List<T> result = new ArrayList<>();
-        depthFirstRecursive(root, result);
+        traversePreOrderRecursively(root, result);
         return result;
     }
 
     /**
      * Рекурсивный вспомогательный метод для обхода в глубину.
      *
-     * @param node текущий обрабатываемый узел
+     * @param node   текущий обрабатываемый узел
      * @param result список для сохранения результатов обхода
      */
-    private void depthFirstRecursive(TreeNode<T> node, List<T> result) {
+    private void traversePreOrderRecursively(TreeNode<T> node, List<T> result) {
         if (node != null) {
             // Прямой обход: корень -> левый -> правый
             result.add(node.data);
-            depthFirstRecursive(node.left, result);
-            depthFirstRecursive(node.right, result);
+            traversePreOrderRecursively(node.left, result);
+            traversePreOrderRecursively(node.right, result);
         }
     }
 
@@ -237,7 +239,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
      *
      * @return список элементов в порядке прямого обхода.
      */
-    public List<T> depthFirstTraversalIterative() {
+    public List<T> traversePreOrderWithIteration() {
         List<T> result = new ArrayList<>();
         if (root == null) {
             return result;

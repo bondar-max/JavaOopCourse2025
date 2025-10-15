@@ -18,19 +18,19 @@ public class Main {
 
         // Вставляем элементы
         System.out.println(lineSeparator + "2. Вставка элементов:");
-        tree.insert(50);
-        tree.insert(30);
-        tree.insert(70);
-        tree.insert(20);
-        tree.insert(40);
-        tree.insert(60);
-        tree.insert(80);
-        tree.insert(10);
-        tree.insert(25);
-        tree.insert(35);
-        tree.insert(45);
+        System.out.println("Вставлен 50: " + tree.insert(50));
+        System.out.println("Вставлен 30: " + tree.insert(30));
+        System.out.println("Вставлен 70: " + tree.insert(70));
+        System.out.println("Вставлен 20: " + tree.insert(20));
+        System.out.println("Вставлен 40: " + tree.insert(40));
+        System.out.println("Вставлен 60: " + tree.insert(60));
+        System.out.println("Вставлен 80: " + tree.insert(80));
+        System.out.println("Вставлен 10: " + tree.insert(10));
+        System.out.println("Вставлен 25: " + tree.insert(25));
+        System.out.println("Вставлен 35: " + tree.insert(35));
+        System.out.println("Вставлен 80: " + tree.insert(80));
+        System.out.println("Вставлен 45: " + tree.insert(45));
 
-        System.out.println("Элементы 50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 45 вставлены в дерево");
         System.out.println("Размер дерева: " + tree.getSize());
         System.out.println("Дерево пустое: " + tree.isEmpty());
 
@@ -43,30 +43,30 @@ public class Main {
 
         // Обход в ширину
         System.out.println(lineSeparator + "4. Обход в ширину (BFS):");
-        System.out.println("Результат: " + tree.breadthFirstTraversal());
+        System.out.println("Результат: " + tree.traverseByLevelOrder());
 
         // Обход в глубину (рекурсивный)
-        System.out.println(lineSeparator + "5. Обход в глубину - рекурсивный (DFS Pre-order):");
-        System.out.println("Результат: " + tree.depthFirstTraversalRecursive());
+        System.out.println(lineSeparator + "5. Обход в глубину - рекурсивный:");
+        System.out.println("Результат: " + tree.traversePreOrderWithRecursion());
 
         // Обход в глубину (итеративный)
-        System.out.println(lineSeparator + "6. Обход в глубину - итеративный (DFS Pre-order):");
-        System.out.println("Результат: " + tree.depthFirstTraversalIterative());
+        System.out.println(lineSeparator + "6. Обход в глубину - итеративный:");
+        System.out.println("Результат: " + tree.traversePreOrderWithIteration());
 
         // Удаляем элементы
         System.out.println(lineSeparator + "7. Удаление элементов:");
 
         // Удаляем лист (узел без детей)
         System.out.println("Удаляем лист 10: " + tree.remove(10));
-        System.out.println("Обход в ширину после удаления 10: " + tree.breadthFirstTraversal());
+        System.out.println("Обход в ширину после удаления 10: " + tree.traverseByLevelOrder());
 
         // Удаляем узел с одним ребенком
         System.out.println("Удаляем узел с одним ребенком 20: " + tree.remove(20));
-        System.out.println("Обход в ширину после удаления 20: " + tree.breadthFirstTraversal());
+        System.out.println("Обход в ширину после удаления 20: " + tree.traverseByLevelOrder());
 
         // Удаляем узел с двумя детьми
         System.out.println("Удаляем узел с двумя детьми 30: " + tree.remove(30));
-        System.out.println("Обход в ширину после удаления 30: " + tree.breadthFirstTraversal());
+        System.out.println("Обход в ширину после удаления 30: " + tree.traverseByLevelOrder());
 
         // Пытаемся удалить несуществующий элемент
         System.out.println("Пытаемся удалить несуществующий элемент 100: " + tree.remove(100));
@@ -89,7 +89,7 @@ public class Main {
         stringTree.insert("date");
         stringTree.insert("elderberry");
 
-        System.out.println("Строковое дерево - обход в ширину: " + stringTree.breadthFirstTraversal());
+        System.out.println("Строковое дерево - обход в ширину: " + stringTree.traverseByLevelOrder());
         System.out.println("Содержит 'banana': " + stringTree.contains("banana"));
         System.out.println("Содержит 'grape': " + stringTree.contains("grape"));
 
@@ -115,9 +115,9 @@ public class Main {
 
         // Финальное состояние дерева
         System.out.println(lineSeparator + "11. Финальное состояние дерева:");
-        System.out.println("Обход в ширину: " + tree.breadthFirstTraversal());
-        System.out.println("Обход в глубину (рекурсивный): " + tree.depthFirstTraversalRecursive());
-        System.out.println("Обход в глубину (итеративный): " + tree.depthFirstTraversalIterative());
+        System.out.println("Обход в ширину: " + tree.traverseByLevelOrder());
+        System.out.println("Обход в глубину (рекурсивный): " + tree.traversePreOrderWithRecursion());
+        System.out.println("Обход в глубину (итеративный): " + tree.traversePreOrderWithIteration());
         System.out.println("Размер дерева: " + tree.getSize());
     }
 }

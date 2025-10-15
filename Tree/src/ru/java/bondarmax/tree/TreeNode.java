@@ -8,7 +8,5 @@ class TreeNode<T extends Comparable<T>> {
 
     public TreeNode(T data) {
         this.data = data;
-        this.left = null;
-        this.right = null;
     }
 }
