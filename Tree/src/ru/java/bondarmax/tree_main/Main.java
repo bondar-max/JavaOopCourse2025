@@ -2,122 +2,130 @@ package ru.java.bondarmax.tree_main;
 
 import ru.java.bondarmax.tree.BinarySearchTree;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
         String lineSeparator = System.lineSeparator();
 
-        // Создаем бинарное дерево поиска для целых чисел
+        // Пример 1: Простое дерево с числами
+        System.out.println("=== Пример 1: Дерево с числами ===");
         BinarySearchTree<Integer> tree = new BinarySearchTree<>();
 
-        System.out.println("=== Демонстрация BinarySearchTree ===");
-
-        // Проверяем пустое дерево
-        System.out.println(lineSeparator + "1. Проверка пустого дерева:");
-        System.out.println("Размер дерева: " + tree.getSize());
-        System.out.println("Дерево пустое: " + tree.isEmpty());
-
-        // Вставляем элементы
-        System.out.println(lineSeparator + "2. Вставка элементов:");
         System.out.println("Вставлен 50: " + tree.insert(50));
         System.out.println("Вставлен 30: " + tree.insert(30));
         System.out.println("Вставлен 70: " + tree.insert(70));
         System.out.println("Вставлен 20: " + tree.insert(20));
         System.out.println("Вставлен 40: " + tree.insert(40));
-        System.out.println("Вставлен 60: " + tree.insert(60));
-        System.out.println("Вставлен 80: " + tree.insert(80));
-        System.out.println("Вставлен 10: " + tree.insert(10));
-        System.out.println("Вставлен 25: " + tree.insert(25));
-        System.out.println("Вставлен 35: " + tree.insert(35));
-        System.out.println("Вставлен 80: " + tree.insert(80));
-        System.out.println("Вставлен 45: " + tree.insert(45));
+        System.out.println("Вставлен 40 (дубликат): " + tree.insert(40));
 
-        System.out.println("Размер дерева: " + tree.getSize());
-        System.out.println("Дерево пустое: " + tree.isEmpty());
+        System.out.println("Дерево: " + tree);
+        System.out.println("Размер: " + tree.getSize());
+        System.out.println("Пустое: " + tree.isEmpty());
 
-        // Проверяем наличие элементов
-        System.out.println(lineSeparator + "3. Проверка наличия элементов:");
-        System.out.println("Содержит 50: " + tree.contains(50));
-        System.out.println("Содержит 25: " + tree.contains(25));
-        System.out.println("Содержит 100: " + tree.contains(100));
-        System.out.println("Содержит 15: " + tree.contains(15));
-
-        // Обход в ширину
-        System.out.println(lineSeparator + "4. Обход в ширину (BFS):");
-        System.out.println("Результат: " + tree.traverseByLevelOrder());
-
-        // Обход в глубину (рекурсивный)
-        System.out.println(lineSeparator + "5. Обход в глубину - рекурсивный:");
-        System.out.println("Результат: " + tree.traversePreOrderWithRecursion());
-
-        // Обход в глубину (итеративный)
-        System.out.println(lineSeparator + "6. Обход в глубину - итеративный:");
-        System.out.println("Результат: " + tree.traversePreOrderWithIteration());
-
-        // Удаляем элементы
-        System.out.println(lineSeparator + "7. Удаление элементов:");
-
-        // Удаляем лист (узел без детей)
-        System.out.println("Удаляем лист 10: " + tree.remove(10));
-        System.out.println("Обход в ширину после удаления 10: " + tree.traverseByLevelOrder());
-
-        // Удаляем узел с одним ребенком
-        System.out.println("Удаляем узел с одним ребенком 20: " + tree.remove(20));
-        System.out.println("Обход в ширину после удаления 20: " + tree.traverseByLevelOrder());
-
-        // Удаляем узел с двумя детьми
-        System.out.println("Удаляем узел с двумя детьми 30: " + tree.remove(30));
-        System.out.println("Обход в ширину после удаления 30: " + tree.traverseByLevelOrder());
-
-        // Пытаемся удалить несуществующий элемент
-        System.out.println("Пытаемся удалить несуществующий элемент 100: " + tree.remove(100));
-
-        System.out.println("Текущий размер дерева: " + tree.getSize());
-
-        // Проверяем состояние после удалений
-        System.out.println(lineSeparator + "8. Проверка состояния после удалений:");
+        // Проверка элементов
         System.out.println("Содержит 30: " + tree.contains(30));
-        System.out.println("Содержит 25: " + tree.contains(25));
-        System.out.println("Содержит 40: " + tree.contains(40));
+        System.out.println("Содержит 100: " + tree.contains(100));
 
-        // Демонстрация с другими типами данных
-        System.out.println(lineSeparator + "9. Демонстрация с строковыми данными:");
+        // Обходы
+        List<Integer> list1 = new ArrayList<>();
+        tree.traverseByLevelOrder(list1::add);
+        System.out.println("Обход в ширину: " + list1);
+
+        List<Integer> list2 = new ArrayList<>();
+        tree.traversePreOrderRecursive(list2::add);
+        System.out.println("Обход в глубину (рекурсивный): " + list2);
+
+        List<Integer> list3 = new ArrayList<>();
+        tree.traversePreOrderIterative(list3::add);
+        System.out.println("Обход в глубину (итеративный): " + list3);
+
+        // Удаление
+        System.out.println("Удален 30: " + tree.remove(30));
+        System.out.println("Удален 100 (не существует): " + tree.remove(100));
+        System.out.println("После удаления: " + tree);
+
+        // Пример 2: Дерево со строками
+        System.out.println(lineSeparator + "=== Пример 2: Дерево со строками ===");
         BinarySearchTree<String> stringTree = new BinarySearchTree<>();
 
-        stringTree.insert("apple");
-        stringTree.insert("banana");
-        stringTree.insert("cherry");
-        stringTree.insert("date");
-        stringTree.insert("elderberry");
+        System.out.println("Вставлен 'apple': " + stringTree.insert("apple"));
+        System.out.println("Вставлен 'banana': " + stringTree.insert("banana"));
+        System.out.println("Вставлен 'cherry': " + stringTree.insert("cherry"));
 
-        System.out.println("Строковое дерево - обход в ширину: " + stringTree.traverseByLevelOrder());
+        System.out.println("Строковое дерево: " + stringTree);
+
+        List<String> stringList = new ArrayList<>();
+        stringTree.traversePreOrderIterative(stringList::add);
+        System.out.println("Обход в глубину (итеративный): " + stringList);
+
         System.out.println("Содержит 'banana': " + stringTree.contains("banana"));
         System.out.println("Содержит 'grape': " + stringTree.contains("grape"));
 
-        // Обработка исключений
-        System.out.println(lineSeparator + "10. Демонстрация обработки исключений:");
-        try {
-            tree.insert(null);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Поймано исключение при вставке null: " + e.getMessage());
-        }
+        // Пример 3: Пустое дерево
+        System.out.println(lineSeparator + "=== Пример 3: Пустое дерево ===");
+        BinarySearchTree<Integer> emptyTree = new BinarySearchTree<>();
+        System.out.println("Пустое дерево: " + emptyTree);
+        System.out.println("Размер: " + emptyTree.getSize());
+        System.out.println("Пустое: " + emptyTree.isEmpty());
 
-        try {
-            tree.contains(null);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Поймано исключение при поиске null: " + e.getMessage());
-        }
+        // Пример 4: Дерево с компаратором
+        System.out.println(lineSeparator + "=== Пример 4: Дерево с компаратором ===");
+        BinarySearchTree<Integer> reverseTree = new BinarySearchTree<>((a, b) -> b - a);
 
-        try {
-            tree.remove(null);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Поймано исключение при удалении null: " + e.getMessage());
-        }
+        System.out.println("Вставлен 50: " + reverseTree.insert(50));
+        System.out.println("Вставлен 30: " + reverseTree.insert(30));
+        System.out.println("Вставлен 70: " + reverseTree.insert(70));
 
-        // Финальное состояние дерева
-        System.out.println(lineSeparator + "11. Финальное состояние дерева:");
-        System.out.println("Обход в ширину: " + tree.traverseByLevelOrder());
-        System.out.println("Обход в глубину (рекурсивный): " + tree.traversePreOrderWithRecursion());
-        System.out.println("Обход в глубину (итеративный): " + tree.traversePreOrderWithIteration());
-        System.out.println("Размер дерева: " + tree.getSize());
+        System.out.println("Обратное дерево: " + reverseTree);
+
+        List<Integer> reverseList1 = new ArrayList<>();
+        reverseTree.traversePreOrderRecursive(reverseList1::add);
+        System.out.println("Обход в глубину (рекурсивный): " + reverseList1);
+
+        List<Integer> reverseList2 = new ArrayList<>();
+        reverseTree.traversePreOrderIterative(reverseList2::add);
+        System.out.println("Обход в глубину (итеративный): " + reverseList2);
+
+        // Пример 5: Дерево с null
+        System.out.println(lineSeparator + "=== Пример 5: Дерево с null ===");
+        BinarySearchTree<Integer> treeWithNull = new BinarySearchTree<>();
+
+        System.out.println("Вставлен 50: " + treeWithNull.insert(50));
+        System.out.println("Вставлен null: " + treeWithNull.insert(null));
+        System.out.println("Вставлен 30: " + treeWithNull.insert(30));
+
+        System.out.println("Дерево с null: " + treeWithNull);
+
+        List<Integer> nullList = new ArrayList<>();
+        treeWithNull.traversePreOrderIterative(nullList::add);
+        System.out.println("Обход в глубину (итеративный): " + nullList);
+
+        System.out.println("Содержит null: " + treeWithNull.contains(null));
+
+        // Пример 6: Операции с Consumer
+        System.out.println(lineSeparator + "=== Пример 6: Операции с Consumer ===");
+        BinarySearchTree<Integer> smallTree = new BinarySearchTree<>();
+
+        smallTree.insert(10);
+        smallTree.insert(5);
+        smallTree.insert(15);
+
+        System.out.print("Элементы (рекурсивный): ");
+        smallTree.traversePreOrderRecursive(value -> System.out.print(value + " "));
+        System.out.println();
+
+        System.out.print("Элементы (итеративный): ");
+        smallTree.traversePreOrderIterative(value -> System.out.print(value + " "));
+        System.out.println();
+
+        int[] sum1 = {0};
+        smallTree.traversePreOrderRecursive(value -> sum1[0] += value);
+        System.out.println("Сумма (рекурсивный): " + sum1[0]);
+
+        int[] sum2 = {0};
+        smallTree.traversePreOrderIterative(value -> sum2[0] += value);
+        System.out.println("Сумма (итеративный): " + sum2[0]);
     }
 }
