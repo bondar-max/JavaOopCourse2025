@@ -111,25 +111,21 @@ public class Graph {
      * @param componentId  номер текущей компоненты связности
      */
     private void exploreComponentDeepIterative(int startVertex, boolean[] visited, int[] componentIds, int componentId) {
-        int[] stack = new int[vertexCount];
-        int stackSize = 0;
+        Deque<Integer> stack = new ArrayDeque<>();
 
         // Добавляем начальную вершину в стек
-        stack[stackSize] = startVertex;
-        stackSize++;
+        stack.push(startVertex);
         visited[startVertex] = true;
         componentIds[startVertex] = componentId;
 
-        while (stackSize > 0) {
-            // Извлекаем вершину из стека (исправлено!)
-            stackSize--;
-            int currentVertex = stack[stackSize];
+        while (!stack.isEmpty()) {
+            // Извлекаем вершину из стека
+            int currentVertex = stack.pop();
 
             // Добавляем всех непосещенных соседей в стек
             for (int neighbor = 0; neighbor < vertexCount; neighbor++) {
                 if (adjacencyMatrix[currentVertex][neighbor] != 0 && !visited[neighbor]) {
-                    stack[stackSize] = neighbor;
-                    stackSize++;
+                    stack.push(neighbor);
                     visited[neighbor] = true;
                     componentIds[neighbor] = componentId;
                 }
@@ -168,25 +164,21 @@ public class Graph {
      * @param componentId  номер текущей компоненты связности
      */
     private void exploreComponentWide(int startVertex, boolean[] visited, int[] componentIds, int componentId) {
-        int[] queue = new int[vertexCount];
-        int queueFront = 0; // указатель на начало очереди
-        int queueRear = 0;  // указатель на конец очереди
+        Queue<Integer> queue = new ArrayDeque<>();
 
         // Добавляем начальную вершину в очередь
-        queue[queueRear] = startVertex;
-        queueRear++;
+        queue.offer(startVertex);
         visited[startVertex] = true;
         componentIds[startVertex] = componentId;
 
-        while (queueFront < queueRear) {
+        while (!queue.isEmpty()) {
             // Извлекаем вершину из начала очереди
-            int currentVertex = queue[queueFront++];
+            int currentVertex = queue.poll();
 
             // Добавляем всех непосещенных соседей в конец очереди
             for (int neighbor = 0; neighbor < vertexCount; neighbor++) {
                 if (adjacencyMatrix[currentVertex][neighbor] != 0 && !visited[neighbor]) {
-                    queue[queueRear] = neighbor;
-                    queueRear++;
+                    queue.offer(neighbor);
                     visited[neighbor] = true;
                     componentIds[neighbor] = componentId;
                 }
