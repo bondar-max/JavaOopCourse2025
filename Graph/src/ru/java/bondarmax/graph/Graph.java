@@ -121,9 +121,9 @@ public class Graph {
         componentIds[startVertex] = componentId;
 
         while (stackSize > 0) {
-            // Извлекаем вершину из стека
-            int currentVertex = stack[stackSize];
+            // Извлекаем вершину из стека (исправлено!)
             stackSize--;
+            int currentVertex = stack[stackSize];
 
             // Добавляем всех непосещенных соседей в стек
             for (int neighbor = 0; neighbor < vertexCount; neighbor++) {
@@ -219,5 +219,37 @@ public class Graph {
 
             System.out.println();
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        String lineSeparator = System.lineSeparator();
+        sb.append("Список смежности графа:").append(lineSeparator);
+
+        for (int vertex = 0; vertex < vertexCount; vertex++) {
+            sb.append(vertex).append(" -> ");
+
+            boolean hasNeighbors = false;
+
+            for (int neighbor = 0; neighbor < vertexCount; neighbor++) {
+                if (adjacencyMatrix[vertex][neighbor] != 0) {
+                    if (hasNeighbors) {
+                        sb.append(", ");
+                    }
+
+                    sb.append(neighbor);
+                    hasNeighbors = true;
+                }
+            }
+
+            if (!hasNeighbors) {
+                sb.append("нет соседей");
+            }
+
+            sb.append(lineSeparator);
+        }
+
+        return sb.toString();
     }
 }
