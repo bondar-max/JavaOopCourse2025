@@ -225,14 +225,17 @@ public class HashTable<E> implements Collection<E> {
 
         for (List<E> bucket : buckets) {
             if (bucket != null && !bucket.isEmpty()) {
-                int initialSize = bucket.size();
+                int initialBucketSize = bucket.size();
 
                 if (bucket.removeAll(c)) {
-                    size -= (initialSize - bucket.size());
-                    modCount++;
+                    size -= (initialBucketSize - bucket.size());
                     isModified = true;
                 }
             }
+        }
+
+        if (isModified) {
+            modCount++;
         }
 
         return isModified;
@@ -254,10 +257,13 @@ public class HashTable<E> implements Collection<E> {
 
                 if (bucket.retainAll(c)) {
                     size -= (initialBucketSize - bucket.size());
-                    modCount++;
                     isModified = true;
                 }
             }
+        }
+
+        if (isModified) {
+            modCount++;
         }
 
         return isModified;
@@ -296,15 +302,17 @@ public class HashTable<E> implements Collection<E> {
         StringBuilder sb = new StringBuilder();
         sb.append('[');
 
-        boolean isFirstElement = true;
+        Iterator<E> iterator = iterator();
 
-        for (E element : this) {
-            if (!isFirstElement) {
-                sb.append(", ");
-            }
+        // Добавляем первый элемент без запятой
+        if (iterator.hasNext()) {
+            sb.append(iterator.next());
+        }
 
-            sb.append(element);
-            isFirstElement = false;
+        // Добавляем остальные элементы с запятыми
+        while (iterator.hasNext()) {
+            sb.append(", ");
+            sb.append(iterator.next());
         }
 
         sb.append(']');
@@ -325,6 +333,7 @@ public class HashTable<E> implements Collection<E> {
         private int bucketIndex;
         private Iterator<E> currentIterator;
         private final int expectedModCount;
+        private int processedElements;
 
         public HashTableIterator() {
             expectedModCount = modCount;
@@ -353,16 +362,7 @@ public class HashTable<E> implements Collection<E> {
 
         @Override
         public boolean hasNext() {
-            if (currentIterator != null && currentIterator.hasNext()) {
-                return true;
-            }
-
-            if (bucketIndex < buckets.length) {
-                bucketIndex++;
-                findNextBucket();
-            }
-
-            return currentIterator != null && currentIterator.hasNext();
+            return processedElements < size;
         }
 
         @Override
@@ -375,14 +375,15 @@ public class HashTable<E> implements Collection<E> {
                 throw new NoSuchElementException("Нет больше элементов в коллекции");
             }
 
-            E element = currentIterator.next();
-
-            if (!currentIterator.hasNext()) {
+            // Если текущий итератор закончился или не установлен, ищем следующий
+            while (currentIterator == null || !currentIterator.hasNext()) {
                 bucketIndex++;
                 findNextBucket();
             }
 
-            return element;
+            processedElements++;
+
+            return currentIterator.next();
         }
     }
 }
