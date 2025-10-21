@@ -22,7 +22,6 @@ public class HashTable<E> implements Collection<E> {
      * @param initialCapacity начальная ёмкость хеш-таблицы
      */
     public HashTable(int initialCapacity) {
-
         // Проверка аргумента на корректность
         if (initialCapacity <= 0) {
             throw new IllegalArgumentException("Вместимость должна быть положительной, получено: " + initialCapacity);
@@ -302,19 +301,12 @@ public class HashTable<E> implements Collection<E> {
         StringBuilder sb = new StringBuilder();
         sb.append('[');
 
-        Iterator<E> iterator = iterator();
-
-        // Добавляем первый элемент без запятой
-        if (iterator.hasNext()) {
-            sb.append(iterator.next());
+        for (E element : this) {
+            sb.append(element).append(", ");
         }
 
-        // Добавляем остальные элементы с запятыми
-        while (iterator.hasNext()) {
-            sb.append(", ");
-            sb.append(iterator.next());
-        }
-
+        // Удаляем последнюю запятую и пробел
+        sb.setLength(sb.length() - 2);
         sb.append(']');
         return sb.toString();
     }
@@ -333,7 +325,7 @@ public class HashTable<E> implements Collection<E> {
         private int bucketIndex;
         private Iterator<E> currentIterator;
         private final int expectedModCount;
-        private int processedElements;
+        private int processedElementsCount;
 
         public HashTableIterator() {
             expectedModCount = modCount;
@@ -341,28 +333,25 @@ public class HashTable<E> implements Collection<E> {
         }
 
         private void findNextBucket() {
-            // Ищем следующую непустую корзину
-            int i = bucketIndex;
-
-            while (i < buckets.length) {
+            // Ищем следующую непустую корзину начиная с текущего bucketIndex
+            for (int i = bucketIndex; i < buckets.length; i++) {
                 List<E> bucket = buckets[i];
 
                 if (bucket != null && !bucket.isEmpty()) {
                     // нашли непустую корзину
-                    currentIterator = bucket.iterator(); // Создаем итератор для этой корзины
+                    currentIterator = bucket.iterator();
                     bucketIndex = i; // Запоминаем позицию
                     return;
                 }
-
-                i++;
             }
 
+            // Если не нашли непустых корзин
             currentIterator = null;
         }
 
         @Override
         public boolean hasNext() {
-            return processedElements < size;
+            return processedElementsCount < size;
         }
 
         @Override
@@ -381,7 +370,7 @@ public class HashTable<E> implements Collection<E> {
                 findNextBucket();
             }
 
-            processedElements++;
+            processedElementsCount++;
 
             return currentIterator.next();
         }
