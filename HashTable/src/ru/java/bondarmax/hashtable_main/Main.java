@@ -83,6 +83,7 @@ public class Main {
         hashTable2.add(40);
 
         System.out.println("Элементы таблицы через итератор:");
+        
         for (Integer number : hashTable2) {
             System.out.println("Число: " + number);
         }
