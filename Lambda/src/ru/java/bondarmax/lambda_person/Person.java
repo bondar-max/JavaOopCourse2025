@@ -1,7 +1,8 @@
 package ru.java.bondarmax.lambda_person;
 
+@SuppressWarnings("FieldMayBeFinal")
 public class Person {
-    private final String name;
+    private String name;
     private int age;
 
     public Person(String name, int age) {
