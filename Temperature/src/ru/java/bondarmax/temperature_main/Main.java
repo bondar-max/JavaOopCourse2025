@@ -3,7 +3,6 @@ package ru.java.bondarmax.temperature_main;
 import ru.java.bondarmax.temperature_model.TemperatureModel;
 import ru.java.bondarmax.temperature_view.TemperatureView;
 import ru.java.bondarmax.temperature_controller.TemperatureController;
-
 import javax.swing.*;
 
 public class Main {
