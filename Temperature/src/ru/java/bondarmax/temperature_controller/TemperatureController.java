@@ -18,10 +18,10 @@ public class TemperatureController {
 
     private void setupEventHandlers() {
         // Обработчик для кнопки конвертации
-        view.getConvertButton().addActionListener(_ -> convertTemperature());
+        view.getConvertButton().addActionListener(e -> convertTemperature());
 
         // Обработка нажатия Enter в поле ввода
-        view.getTemperatureField().addActionListener(_ -> convertTemperature());
+        view.getTemperatureField().addActionListener(e -> convertTemperature());
     }
 
     private void convertTemperature() {
