@@ -6,7 +6,7 @@ import ru.java.bondarmax.temperature_controller.TemperatureController;
 
 import javax.swing.*;
 
-public class TemperatureConverter {
+public class Main {
     public static void main(String[] args) {
         // Запуск в потоке диспетчера событий
         SwingUtilities.invokeLater(() -> {
