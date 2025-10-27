@@ -244,7 +244,7 @@ public class BinarySearchTree<E> {
      *
      * @param consumer потребитель для обработки элементов
      */
-    public void traverseBreadthFirst(Consumer<E> consumer) {
+    public void traverseBreadthFirstSearch(Consumer<E> consumer) {
         if (root == null) {
             return;
         }
@@ -272,8 +272,8 @@ public class BinarySearchTree<E> {
      *
      * @param consumer потребитель для обработки элементов
      */
-    public void traverseDepthFirstRecursive(Consumer<E> consumer) {
-        traverseDepthFirstRecursive(root, consumer);
+    public void traverseDepthFirstSearchRecursive(Consumer<E> consumer) {
+        traverseDepthFirstSearchRecursive(root, consumer);
     }
 
     /**
@@ -282,12 +282,12 @@ public class BinarySearchTree<E> {
      * @param node     текущий обрабатываемый узел
      * @param consumer потребитель для обработки элементов
      */
-    private void traverseDepthFirstRecursive(TreeNode<E> node, Consumer<E> consumer) {
+    private void traverseDepthFirstSearchRecursive(TreeNode<E> node, Consumer<E> consumer) {
         if (node != null) {
             // Прямой обход: корень -> левый -> правый
             consumer.accept(node.getData());
-            traverseDepthFirstRecursive(node.getLeft(), consumer);
-            traverseDepthFirstRecursive(node.getRight(), consumer);
+            traverseDepthFirstSearchRecursive(node.getLeft(), consumer);
+            traverseDepthFirstSearchRecursive(node.getRight(), consumer);
         }
     }
 
@@ -297,7 +297,7 @@ public class BinarySearchTree<E> {
      *
      * @param consumer потребитель для обработки элементов
      */
-    public void traverseDepthFirstIterative(Consumer<E> consumer) {
+    public void traverseDepthFirstSearchIterative(Consumer<E> consumer) {
         if (root == null) {
             return;
         }
@@ -357,7 +357,7 @@ public class BinarySearchTree<E> {
         sb.append('[');
 
         // Используем обход в ширину для строкового представления
-        traverseBreadthFirst(element -> sb.append(element).append(", "));
+        traverseBreadthFirstSearch(element -> sb.append(element).append(", "));
 
         // Удаляем последнюю запятую и пробел
         if (sb.length() > 1) {

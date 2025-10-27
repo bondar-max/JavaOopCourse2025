@@ -30,15 +30,15 @@ public class Main {
 
         // Обходы
         List<Integer> list1 = new ArrayList<>();
-        tree.traverseBreadthFirst(list1::add);
+        tree.traverseBreadthFirstSearch(list1::add);
         System.out.println("Обход в ширину: " + list1);
 
         List<Integer> list2 = new ArrayList<>();
-        tree.traverseDepthFirstRecursive(list2::add);
+        tree.traverseDepthFirstSearchRecursive(list2::add);
         System.out.println("Обход в глубину (рекурсивный): " + list2);
 
         List<Integer> list3 = new ArrayList<>();
-        tree.traverseDepthFirstIterative(list3::add);
+        tree.traverseDepthFirstSearchIterative(list3::add);
         System.out.println("Обход в глубину (итеративный): " + list3);
 
         // Удаление
@@ -57,7 +57,7 @@ public class Main {
         System.out.println("Строковое дерево: " + stringTree);
 
         List<String> stringList = new ArrayList<>();
-        stringTree.traverseDepthFirstIterative(stringList::add);
+        stringTree.traverseDepthFirstSearchIterative(stringList::add);
         System.out.println("Обход в глубину (итеративный): " + stringList);
 
         System.out.println("Содержит 'banana': " + stringTree.contains("banana"));
@@ -81,11 +81,11 @@ public class Main {
         System.out.println("Обратное дерево: " + reverseTree);
 
         List<Integer> reverseList1 = new ArrayList<>();
-        reverseTree.traverseDepthFirstRecursive(reverseList1::add);
+        reverseTree.traverseDepthFirstSearchRecursive(reverseList1::add);
         System.out.println("Обход в глубину (рекурсивный): " + reverseList1);
 
         List<Integer> reverseList2 = new ArrayList<>();
-        reverseTree.traverseDepthFirstIterative(reverseList2::add);
+        reverseTree.traverseDepthFirstSearchIterative(reverseList2::add);
         System.out.println("Обход в глубину (итеративный): " + reverseList2);
 
         // Пример 5: Дерево с null
@@ -99,7 +99,7 @@ public class Main {
         System.out.println("Дерево с null: " + treeWithNull);
 
         List<Integer> nullList = new ArrayList<>();
-        treeWithNull.traverseDepthFirstIterative(nullList::add);
+        treeWithNull.traverseDepthFirstSearchIterative(nullList::add);
         System.out.println("Обход в глубину (итеративный): " + nullList);
 
         System.out.println("Содержит null: " + treeWithNull.contains(null));
@@ -113,19 +113,19 @@ public class Main {
         smallTree.insert(15);
 
         System.out.print("Элементы (рекурсивный): ");
-        smallTree.traverseDepthFirstRecursive(value -> System.out.print(value + " "));
+        smallTree.traverseDepthFirstSearchRecursive(value -> System.out.print(value + " "));
         System.out.println();
 
         System.out.print("Элементы (итеративный): ");
-        smallTree.traverseDepthFirstIterative(value -> System.out.print(value + " "));
+        smallTree.traverseDepthFirstSearchIterative(value -> System.out.print(value + " "));
         System.out.println();
 
         int[] sum1 = {0};
-        smallTree.traverseDepthFirstRecursive(value -> sum1[0] += value);
+        smallTree.traverseDepthFirstSearchRecursive(value -> sum1[0] += value);
         System.out.println("Сумма (рекурсивный): " + sum1[0]);
 
         int[] sum2 = {0};
-        smallTree.traverseDepthFirstIterative(value -> sum2[0] += value);
+        smallTree.traverseDepthFirstSearchIterative(value -> sum2[0] += value);
         System.out.println("Сумма (итеративный): " + sum2[0]);
     }
 }
