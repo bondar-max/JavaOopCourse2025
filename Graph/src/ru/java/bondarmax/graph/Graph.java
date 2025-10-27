@@ -1,6 +1,7 @@
 package ru.java.bondarmax.graph;
 
 import java.util.*;
+import java.util.function.IntConsumer;
 
 /**
  * Класс для реализации алгоритмов обхода графа (в глубину и в ширину)
@@ -8,208 +9,172 @@ import java.util.*;
  */
 public class Graph {
     private final int[][] adjacencyMatrix; // матрица смежности графа
-    private final int vertexCount;         // количество вершин в графе
+    private final int verticesCount;         // количество вершин в графе
 
     /**
      * Конструктор класса Graph
      *
-     * @param matrix матрица смежности графа
+     * @param adjacencyMatrix матрица смежности графа
      */
-    public Graph(int[][] matrix) {
-        this.adjacencyMatrix = matrix;
-        this.vertexCount = matrix.length;
-    }
+    public Graph(int[][] adjacencyMatrix) {
+        if (adjacencyMatrix == null) {
+            throw new IllegalArgumentException("Матрица смежности не может быть null");
+        }
 
-    /**
-     * Получить матрицу смежности графа
-     *
-     * @return матрица смежности
-     */
-    public int[][] getAdjacencyMatrix() {
-        return adjacencyMatrix;
-    }
-
-    /**
-     * Получить количество вершин в графе
-     *
-     * @return количество вершин
-     */
-    public int getVertexCount() {
-        return vertexCount;
-    }
-
-
-    /**
-     * Обход графа в глубину с использованием рекурсии
-     *
-     * @return массив, где для каждой вершины указан номер её компоненты связности
-     */
-    public int[] performDeepSearchRecursive() {
-        boolean[] visited = new boolean[vertexCount];
-        int[] componentIds = new int[vertexCount];
-        Arrays.fill(componentIds, -1);
-        int currentComponentId = 0;
-
-        for (int vertex = 0; vertex < vertexCount; vertex++) {
-            if (!visited[vertex]) {
-                exploreComponentDeepRecursive(vertex, visited, componentIds, currentComponentId);
-                currentComponentId++;
+        // Проверяем, что матрица квадратная
+        for (int[] matrix : adjacencyMatrix) {
+            if (matrix == null || matrix.length != adjacencyMatrix.length) {
+                throw new IllegalArgumentException("Матрица смежности должна быть квадратной");
             }
         }
 
-        return componentIds;
+        this.adjacencyMatrix = adjacencyMatrix;
+        this.verticesCount = adjacencyMatrix.length;
     }
 
     /**
-     * Вспомогательный метод для рекурсивного обхода в глубину
+     * Выполняет обход графа в глубину с использованием рекурсии.
+     * Алгоритм посещает все вершины графа, начиная с вершины 0 и продолжая по всем компонентам связности.
+     * Для каждой посещенной вершины вызывается метод accept переданного потребителя.
+     * Порядок обхода: сначала обрабатывается текущая вершина, затем рекурсивно все её непосещенные соседи.
      *
-     * @param currentVertex текущая вершина для обработки
-     * @param visited       массив посещенных вершин
-     * @param componentIds  массив для хранения номеров компонент
-     * @param componentId   номер текущей компоненты связности
+     * @param visitor потребитель для обработки вершин, вызывается для каждой посещаемой вершины
+     * @throws IllegalArgumentException если visitor равен null
      */
-    private void exploreComponentDeepRecursive(int currentVertex, boolean[] visited, int[] componentIds, int componentId) {
-        visited[currentVertex] = true;
-        componentIds[currentVertex] = componentId;
+    public void traverseDfsRecursive(IntConsumer visitor) {
+        if (visitor == null) {
+            throw new IllegalArgumentException("Потребитель не может быть null");
+        }
+        boolean[] visited = new boolean[verticesCount];
 
-        // Рекурсивно посещаем всех непосещенных соседей
-        for (int neighbor = 0; neighbor < vertexCount; neighbor++) {
-            if (adjacencyMatrix[currentVertex][neighbor] != 0 && !visited[neighbor]) {
-                exploreComponentDeepRecursive(neighbor, visited, componentIds, componentId);
+        for (int vertexIndex = 0; vertexIndex < verticesCount; vertexIndex++) {
+            if (!visited[vertexIndex]) {
+                traverseDfsRecursive(vertexIndex, visited, visitor);
             }
         }
     }
 
     /**
-     * Обход графа в глубину без использования рекурсии.
-     * Использует массив для эмуляции стека
+     * Выполняет обход графа в глубину без использования рекурсии.
+     * Использует стек для эмуляции рекурсивного вызова.
+     * Алгоритм посещает все вершины графа, обрабатывая каждую компоненту связности.
+     * Для каждой посещенной вершины вызывается метод accept переданного потребителя.
+     * Порядок обхода: вершины обрабатываются в порядке LIFO (последний пришел - первый вышел).
      *
-     * @return массив, где для каждой вершины указан номер её компоненты связности
+     * @param visitor потребитель для обработки вершин, вызывается для каждой посещаемой вершины
+     * @throws IllegalArgumentException если visitor равен null
      */
-    public int[] performDeepSearchIterative() {
-        boolean[] visited = new boolean[vertexCount];
-        int[] componentIds = new int[vertexCount];
-        Arrays.fill(componentIds, -1);
-        int currentComponentId = 0;
+    public void traverseDfsIterative(IntConsumer visitor) {
+        if (visitor == null) {
+            throw new IllegalArgumentException("Потребитель не может быть null");
+        }
+        boolean[] visited = new boolean[verticesCount];
 
-        for (int startVertex = 0; startVertex < vertexCount; startVertex++) {
-            if (!visited[startVertex]) {
-                exploreComponentDeepIterative(startVertex, visited, componentIds, currentComponentId);
-                currentComponentId++;
+        for (int startVertexIndex = 0; startVertexIndex < verticesCount; startVertexIndex++) {
+            if (!visited[startVertexIndex]) {
+                traverseDfsIterative(startVertexIndex, visited, visitor);
             }
         }
-
-        return componentIds;
     }
 
     /**
-     * Вспомогательный метод для итеративного обхода в глубину
+     * Выполняет обход графа в ширину.
+     * Использует очередь для обработки вершин по уровням.
+     * Алгоритм посещает все вершины графа, начиная с ближайших соседей.
+     * Для каждой посещенной вершины вызывается метод accept переданного потребителя.
+     * Порядок обхода: вершины обрабатываются в порядке FIFO (первый пришел - первый вышел).
      *
-     * @param startVertex  начальная вершина компоненты
-     * @param visited      массив посещенных вершин
-     * @param componentIds массив для хранения номеров компонент
-     * @param componentId  номер текущей компоненты связности
+     * @param visitor потребитель для обработки вершин, вызывается для каждой посещаемой вершины
+     * @throws IllegalArgumentException если visitor равен null
      */
-    private void exploreComponentDeepIterative(int startVertex, boolean[] visited, int[] componentIds, int componentId) {
+    public void traverseBfs(IntConsumer visitor) {
+        if (visitor == null) {
+            throw new IllegalArgumentException("Потребитель не может быть null");
+        }
+        boolean[] visited = new boolean[verticesCount];
+
+        for (int startVertexIndex = 0; startVertexIndex < verticesCount; startVertexIndex++) {
+            if (!visited[startVertexIndex]) {
+                traverseBfs(startVertexIndex, visited, visitor);
+            }
+        }
+    }
+
+    /**
+     * Вспомогательный метод для рекурсивного обхода в глубину.
+     * Помечает текущую вершину как посещенную, вызывает потребитель и рекурсивно обрабатывает всех непосещенных соседей.
+     *
+     * @param currentVertexIndex текущая обрабатываемая вершина
+     * @param visited            массив отметок о посещении вершин
+     * @param visitor            потребитель для обработки вершин
+     */
+    private void traverseDfsRecursive(int currentVertexIndex, boolean[] visited, IntConsumer visitor) {
+        visited[currentVertexIndex] = true;
+        visitor.accept(currentVertexIndex);
+
+        for (int neighborIndex = 0; neighborIndex < verticesCount; neighborIndex++) {
+            if (adjacencyMatrix[currentVertexIndex][neighborIndex] != 0 && !visited[neighborIndex]) {
+                traverseDfsRecursive(neighborIndex, visited, visitor);
+            }
+        }
+    }
+
+    /**
+     * Вспомогательный метод для итеративного обхода в глубину.
+     * Использует стек для хранения вершин, подлежащих обработке.
+     * На каждой итерации извлекает вершину из стека, вызывает потребитель и добавляет всех непосещенных соседей в стек.
+     *
+     * @param startVertexIndex начальная вершина для обхода компоненты связности
+     * @param visited          массив отметок о посещении вершин
+     * @param visitor          потребитель для обработки вершин
+     */
+    private void traverseDfsIterative(int startVertexIndex, boolean[] visited, IntConsumer visitor) {
         Deque<Integer> stack = new ArrayDeque<>();
 
-        // Добавляем начальную вершину в стек
-        stack.push(startVertex);
-        visited[startVertex] = true;
-        componentIds[startVertex] = componentId;
+        stack.push(startVertexIndex);
 
         while (!stack.isEmpty()) {
-            // Извлекаем вершину из стека
-            int currentVertex = stack.pop();
+            int currentVertexIndex = stack.pop();
 
-            // Добавляем всех непосещенных соседей в стек
-            for (int neighbor = 0; neighbor < vertexCount; neighbor++) {
-                if (adjacencyMatrix[currentVertex][neighbor] != 0 && !visited[neighbor]) {
-                    stack.push(neighbor);
-                    visited[neighbor] = true;
-                    componentIds[neighbor] = componentId;
+            if (!visited[currentVertexIndex]) {
+                visited[currentVertexIndex] = true;
+                visitor.accept(currentVertexIndex);
+
+                // Добавляем всех непосещенных соседей в стек
+                for (int neighborIndex = verticesCount - 1; neighborIndex >= 0; neighborIndex--) {
+                    if (adjacencyMatrix[currentVertexIndex][neighborIndex] != 0 && !visited[neighborIndex]) {
+                        stack.push(neighborIndex);
+                    }
                 }
             }
         }
     }
 
     /**
-     * Обход графа в ширину.
-     * Использует массив для эмуляции очереди
+     * Вспомогательный метод для обхода в ширину.
+     * Использует очередь для обработки вершин по уровням.
+     * На каждой итерации извлекает вершину из начала очереди, вызывает потребитель и добавляет всех непосещенных соседей в конец очереди.
      *
-     * @return массив, где для каждой вершины указан номер её компоненты связности
+     * @param startVertexIndex начальная вершина для обхода компоненты связности
+     * @param visited          массив отметок о посещении вершин
+     * @param visitor          потребитель для обработки вершин
      */
-    public int[] performWideSearch() {
-        boolean[] visited = new boolean[vertexCount];
-        int[] componentIds = new int[vertexCount];
-        Arrays.fill(componentIds, -1);
-        int currentComponentId = 0;
-
-        for (int startVertex = 0; startVertex < vertexCount; startVertex++) {
-            if (!visited[startVertex]) {
-                exploreComponentWide(startVertex, visited, componentIds, currentComponentId);
-                currentComponentId++;
-            }
-        }
-
-        return componentIds;
-    }
-
-    /**
-     * Вспомогательный метод для обхода в ширину
-     *
-     * @param startVertex  начальная вершина компоненты
-     * @param visited      массив посещенных вершин
-     * @param componentIds массив для хранения номеров компонент
-     * @param componentId  номер текущей компоненты связности
-     */
-    private void exploreComponentWide(int startVertex, boolean[] visited, int[] componentIds, int componentId) {
+    private void traverseBfs(int startVertexIndex, boolean[] visited, IntConsumer visitor) {
         Queue<Integer> queue = new ArrayDeque<>();
 
-        // Добавляем начальную вершину в очередь
-        queue.offer(startVertex);
-        visited[startVertex] = true;
-        componentIds[startVertex] = componentId;
+        queue.offer(startVertexIndex);
+        visited[startVertexIndex] = true;
 
         while (!queue.isEmpty()) {
-            // Извлекаем вершину из начала очереди
-            int currentVertex = queue.poll();
+            int currentVertex = queue.remove();
+            visitor.accept(currentVertex);
 
-            // Добавляем всех непосещенных соседей в конец очереди
-            for (int neighbor = 0; neighbor < vertexCount; neighbor++) {
-                if (adjacencyMatrix[currentVertex][neighbor] != 0 && !visited[neighbor]) {
-                    queue.offer(neighbor);
-                    visited[neighbor] = true;
-                    componentIds[neighbor] = componentId;
+            for (int neighborIndex = 0; neighborIndex < verticesCount; neighborIndex++) {
+                if (adjacencyMatrix[currentVertex][neighborIndex] != 0 && !visited[neighborIndex]) {
+                    queue.offer(neighborIndex);
+                    visited[neighborIndex] = true;
                 }
             }
-        }
-    }
-
-    /**
-     * Вспомогательный метод для вывода компонент связности
-     *
-     * @param componentIds массив с номерами компонент для каждой вершины
-     */
-    public static void printComponents(int[] componentIds) {
-        int maxComponentId = 0;
-
-        for (int componentId : componentIds) {
-            if (componentId > maxComponentId) {
-                maxComponentId = componentId;
-            }
-        }
-
-        for (int componentId = 0; componentId <= maxComponentId; componentId++) {
-            System.out.print("Компонента " + (componentId + 1) + ": ");
-
-            for (int vertex = 0; vertex < componentIds.length; vertex++) {
-                if (componentIds[vertex] == componentId) {
-                    System.out.print(vertex + " ");
-                }
-            }
-
-            System.out.println();
         }
     }
 
@@ -219,18 +184,18 @@ public class Graph {
         String lineSeparator = System.lineSeparator();
         sb.append("Список смежности графа:").append(lineSeparator);
 
-        for (int vertex = 0; vertex < vertexCount; vertex++) {
-            sb.append(vertex).append(" -> ");
+        for (int vertexIndex = 0; vertexIndex < verticesCount; vertexIndex++) {
+            sb.append(vertexIndex).append(" -> ");
 
             boolean hasNeighbors = false;
 
-            for (int neighbor = 0; neighbor < vertexCount; neighbor++) {
-                if (adjacencyMatrix[vertex][neighbor] != 0) {
+            for (int neighborIndex = 0; neighborIndex < verticesCount; neighborIndex++) {
+                if (adjacencyMatrix[vertexIndex][neighborIndex] != 0) {
                     if (hasNeighbors) {
                         sb.append(", ");
                     }
 
-                    sb.append(neighbor);
+                    sb.append(neighborIndex);
                     hasNeighbors = true;
                 }
             }

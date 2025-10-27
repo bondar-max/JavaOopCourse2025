@@ -2,33 +2,29 @@ package ru.java.bondarmax.graph_main;
 
 import ru.java.bondarmax.graph.Graph;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
         Graph graph = getGraph();
 
-        System.out.println("Матрица смежности:");
-
-        for (int i = 0; i < graph.getVertexCount(); i++) {
-            for (int j = 0; j < graph.getVertexCount(); j++) {
-                System.out.print(graph.getAdjacencyMatrix()[i][j] + " ");
-            }
-
-            System.out.println();
-        }
-
         String lineSeparator = System.lineSeparator();
 
         System.out.println(lineSeparator + "=== Рекурсивный поиск в глубину ===");
-        int[] componentsDFSRecursive = graph.performDeepSearchRecursive();
-        Graph.printComponents(componentsDFSRecursive);
+        List<Integer> dfsRecursiveResult = new ArrayList<>();
+        graph.traverseDfsRecursive(dfsRecursiveResult::add);
+        System.out.println("Порядок обхода: " + dfsRecursiveResult);
 
         System.out.println(lineSeparator + "=== Итеративный поиск в глубину ===");
-        int[] componentsDFSIterative = graph.performDeepSearchIterative();
-        Graph.printComponents(componentsDFSIterative);
+        List<Integer> dfsIterativeResult = new ArrayList<>();
+        graph.traverseDfsIterative(dfsIterativeResult::add);
+        System.out.println("Порядок обхода: " + dfsIterativeResult);
 
         System.out.println(lineSeparator + "=== Поиск в ширину ===");
-        int[] componentsBFS = graph.performWideSearch();
-        Graph.printComponents(componentsBFS);
+        List<Integer> bfsResult = new ArrayList<>();
+        graph.traverseBfs(bfsResult::add);
+        System.out.println("Порядок обхода: " + bfsResult);
 
         System.out.println();
 
