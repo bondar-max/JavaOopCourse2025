@@ -9,23 +9,12 @@ public class BinarySearchTree<E> {
     private int size;
     private final Comparator<? super E> comparator;
 
-    // Класс узла бинарного дерева
-    private static class TreeNode<E> {
-        private final E data;
-        private TreeNode<E> left;
-        private TreeNode<E> right;
-
-        public TreeNode(E data) {
-            this.data = data;
-        }
-    }
-
     /**
      * Конструктор без компаратора.
      * Элементы должны реализовывать интерфейс Comparable<T>
      */
     public BinarySearchTree() {
-        this.comparator = null;
+        comparator = null;
     }
 
     /**
@@ -58,14 +47,14 @@ public class BinarySearchTree<E> {
         while (currentNode != null) {
             parentNode = currentNode;
 
-            int comparison = compare(data, currentNode.data);
+            int compareResult = compare(data, currentNode.getData());
 
-            if (comparison < 0) {
-                currentNode = currentNode.left;
+            if (compareResult < 0) {
+                currentNode = currentNode.getLeft();
                 isLeftChild = true;
             } else {
                 // >= 0 - дубликаты идут в правое поддерево
-                currentNode = currentNode.right;
+                currentNode = currentNode.getRight();
                 isLeftChild = false;
             }
         }
@@ -74,15 +63,14 @@ public class BinarySearchTree<E> {
         TreeNode<E> newNode = new TreeNode<>(data);
 
         if (isLeftChild) {
-            parentNode.left = newNode;
+            parentNode.setLeft(newNode);
         } else {
-            parentNode.right = newNode;
+            parentNode.setRight(newNode);
         }
 
         size++;
         return true;
     }
-
 
     /**
      * Проверяет, содержится ли элемент в дереве.
@@ -94,14 +82,16 @@ public class BinarySearchTree<E> {
         TreeNode<E> currentNode = root;
 
         while (currentNode != null) {
-            int comparison = compare(data, currentNode.data);
+            int comparison = compare(data, currentNode.getData());
 
             if (comparison == 0) {
                 return true;
-            } else if (comparison < 0) {
-                currentNode = currentNode.left;
+            }
+
+            if (comparison < 0) {
+                currentNode = currentNode.getLeft();
             } else {
-                currentNode = currentNode.right;
+                currentNode = currentNode.getRight();
             }
         }
 
@@ -121,7 +111,7 @@ public class BinarySearchTree<E> {
 
         // Поиск узла для удаления
         while (currentNode != null) {
-            int comparison = compare(data, currentNode.data);
+            int comparison = compare(data, currentNode.getData());
 
             if (comparison == 0) {
                 removeNode(currentNode, parentNode, isLeftChild);
@@ -131,10 +121,10 @@ public class BinarySearchTree<E> {
             parentNode = currentNode;
 
             if (comparison < 0) {
-                currentNode = currentNode.left;
+                currentNode = currentNode.getLeft();
                 isLeftChild = true;
             } else {
-                currentNode = currentNode.right;
+                currentNode = currentNode.getRight();
                 isLeftChild = false;
             }
         }
@@ -146,70 +136,88 @@ public class BinarySearchTree<E> {
      * Вспомогательный метод для удаления узла.
      */
     private void removeNode(TreeNode<E> node, TreeNode<E> parentNode, boolean isLeftChild) {
-        // Случай 1: Узел без детей
-        if (node.left == null && node.right == null) {
-            if (node == root) {
-                root = null;
-            } else if (isLeftChild) {
-                parentNode.left = null;
-            } else {
-                parentNode.right = null;
-            }
-        }
-        // Случай 2: Узел с одним ребенком (правым)
-        else if (node.left == null) {
-            if (node == root) {
-                root = node.right;
-            } else if (isLeftChild) {
-                parentNode.left = node.right;
-            } else {
-                parentNode.right = node.right;
-            }
-        }
-        // Случай 2: Узел с одним ребенком (левым)
-        else if (node.right == null) {
-            if (node == root) {
-                root = node.left;
-            } else if (isLeftChild) {
-                parentNode.left = node.left;
-            } else {
-                parentNode.right = node.left;
-            }
+        // Случаи 1 и 2: Узел без детей или с одним ребенком
+        if (node.getLeft() == null || node.getRight() == null) {
+            TreeNode<E> child = (node.getLeft() != null) ? node.getLeft() : node.getRight();
+            updateParentReference(node, parentNode, isLeftChild, child);
         }
         // Случай 3: Узел с двумя детьми
         else {
-            // Находим преемника (минимальный в правом поддереве) и его родителя
-            TreeNode<E> successorParent = node;
-            TreeNode<E> successor = node.right;
-            boolean isSuccessorLeftChild = false;
+            // Находим преемника (минимальный в правом поддереве)
+            TreeNode<E> successor = findMin(node.getRight());
 
-            while (successor.left != null) {
-                successorParent = successor;
-                successor = successor.left;
-                isSuccessorLeftChild = true;
-            }
+            // Создаем новый узел с данными преемника
+            TreeNode<E> replacementNode = new TreeNode<>(successor.getData());
 
-            // Перестраиваем ссылки вместо копирования данных
-            if (isSuccessorLeftChild) {
-                successorParent.left = successor.right;
-            } else {
-                successorParent.right = successor.right;
-            }
+            // Устанавливаем детей удаляемого узла
+            replacementNode.setLeft(node.getLeft());
 
-            // Заменяем удаляемый узел преемником
-            successor.left = node.left;
-            successor.right = node.right;
+            // Создаем новое правое поддерево без преемника
+            replacementNode.setRight(removeMin(node.getRight()));
 
-            if (node == root) {
-                root = successor;
-            } else if (isLeftChild) {
-                parentNode.left = successor;
-            } else {
-                parentNode.right = successor;
-            }
+            // Обновляем ссылку родительского узла
+            updateParentReference(node, parentNode, isLeftChild, replacementNode);
         }
 
         size--;
+    }
+
+    /**
+     * Находит узел с минимальным значением в поддереве.
+     * В бинарном дереве поиска минимальный элемент всегда находится
+     * в самом левом узле заданного поддерева.
+     *
+     * @param node корень поддерева для поиска
+     * @return узел с минимальным значением в поддереве
+     */
+    private TreeNode<E> findMin(TreeNode<E> node) {
+        TreeNode<E> currentNode = node;
+
+        // Двигаемся влево, пока не найдем узел без левого ребенка
+        while (currentNode.getLeft() != null) {
+            currentNode = currentNode.getLeft();
+        }
+
+        return currentNode;
+    }
+
+    /**
+     * Удаляет узел с минимальным значением из поддерева и возвращает новое поддерево.
+     * Минимальный узел всегда является самым левым узлом в поддереве.
+     *
+     * @param node корень поддерева, из которого нужно удалить минимальный узел
+     * @return новое поддерево без минимального узла
+     */
+    private TreeNode<E> removeMin(TreeNode<E> node) {
+        if (node.getLeft() == null) {
+            return node.getRight();
+        }
+
+        TreeNode<E> parent = node;
+        TreeNode<E> current = node.getLeft();
+
+        // Ищем минимальный узел и его родителя
+        while (current.getLeft() != null) {
+            parent = current;
+            current = current.getLeft();
+        }
+
+        // Удаляем минимальный узел, подставляя его правого ребенка
+        parent.setLeft(current.getRight());
+        return node;
+    }
+
+    /**
+     * Вспомогательный метод для обновления ссылки на узел в родительском узле.
+     */
+    private void updateParentReference(TreeNode<E> node, TreeNode<E> parentNode, boolean isLeftChild, TreeNode<E> child) {
+        if (node == root) {
+            root = child;
+        } else if (isLeftChild) {
+            parentNode.setLeft(child);
+        } else {
+            parentNode.setRight(child);
+        }
     }
 
     /**
@@ -236,7 +244,7 @@ public class BinarySearchTree<E> {
      *
      * @param consumer потребитель для обработки элементов
      */
-    public void traverseByLevelOrder(Consumer<E> consumer) {
+    public void traverseBreadthFirst(Consumer<E> consumer) {
         if (root == null) {
             return;
         }
@@ -245,15 +253,15 @@ public class BinarySearchTree<E> {
         queue.offer(root);
 
         while (!queue.isEmpty()) {
-            TreeNode<E> current = queue.poll();
-            consumer.accept(current.data);
+            TreeNode<E> currentNode = queue.remove();
+            consumer.accept(currentNode.getData());
 
-            if (current.left != null) {
-                queue.offer(current.left);
+            if (currentNode.getLeft() != null) {
+                queue.offer(currentNode.getLeft());
             }
 
-            if (current.right != null) {
-                queue.offer(current.right);
+            if (currentNode.getRight() != null) {
+                queue.offer(currentNode.getRight());
             }
         }
     }
@@ -264,8 +272,8 @@ public class BinarySearchTree<E> {
      *
      * @param consumer потребитель для обработки элементов
      */
-    public void traversePreOrderRecursive(Consumer<E> consumer) {
-        traversePreOrderRecursive(root, consumer);
+    public void traverseDepthFirstRecursive(Consumer<E> consumer) {
+        traverseDepthFirstRecursive(root, consumer);
     }
 
     /**
@@ -274,12 +282,12 @@ public class BinarySearchTree<E> {
      * @param node     текущий обрабатываемый узел
      * @param consumer потребитель для обработки элементов
      */
-    private void traversePreOrderRecursive(TreeNode<E> node, Consumer<E> consumer) {
+    private void traverseDepthFirstRecursive(TreeNode<E> node, Consumer<E> consumer) {
         if (node != null) {
             // Прямой обход: корень -> левый -> правый
-            consumer.accept(node.data);
-            traversePreOrderRecursive(node.left, consumer);
-            traversePreOrderRecursive(node.right, consumer);
+            consumer.accept(node.getData());
+            traverseDepthFirstRecursive(node.getLeft(), consumer);
+            traverseDepthFirstRecursive(node.getRight(), consumer);
         }
     }
 
@@ -289,7 +297,7 @@ public class BinarySearchTree<E> {
      *
      * @param consumer потребитель для обработки элементов
      */
-    public void traversePreOrderIterative(Consumer<E> consumer) {
+    public void traverseDepthFirstIterative(Consumer<E> consumer) {
         if (root == null) {
             return;
         }
@@ -299,16 +307,16 @@ public class BinarySearchTree<E> {
 
         while (!stack.isEmpty()) {
             TreeNode<E> current = stack.pop();
-            consumer.accept(current.data);
+            consumer.accept(current.getData());
 
             // Сначала добавляем правого ребенка, потом левого
             // чтобы левый обрабатывался первым (LIFO)
-            if (current.right != null) {
-                stack.push(current.right);
+            if (current.getRight() != null) {
+                stack.push(current.getRight());
             }
 
-            if (current.left != null) {
-                stack.push(current.left);
+            if (current.getLeft() != null) {
+                stack.push(current.getLeft());
             }
         }
     }
@@ -326,11 +334,12 @@ public class BinarySearchTree<E> {
             return 1;  // любое не-null значение больше null
         }
 
+        // Если задан компаратор, то всегда используется он
         if (comparator != null) {
             return comparator.compare(a, b);
-        } else {
-            return ((Comparable<? super E>) a).compareTo(b);
         }
+
+        return ((Comparable<? super E>) a).compareTo(b);
     }
 
     /**
@@ -341,24 +350,21 @@ public class BinarySearchTree<E> {
     @Override
     public String toString() {
         if (root == null) {
-            return "BinarySearchTree []";
+            return "[]";
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("BinarySearchTree [");
+        sb.append('[');
 
         // Используем обход в ширину для строкового представления
-        traverseByLevelOrder(element -> {
-            sb.append(element);
-            sb.append(", ");
-        });
+        traverseBreadthFirst(element -> sb.append(element).append(", "));
 
         // Удаляем последнюю запятую и пробел
-        if (sb.length() > "BinarySearchTree [".length()) {
+        if (sb.length() > 1) {
             sb.setLength(sb.length() - 2);
         }
 
-        sb.append("]");
+        sb.append(']');
         return sb.toString();
     }
 }
