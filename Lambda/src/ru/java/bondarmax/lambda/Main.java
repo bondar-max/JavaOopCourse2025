@@ -1,6 +1,4 @@
-package ru.java.bondarmax.lambda_main;
-
-import ru.java.bondarmax.lambda_person.Person;
+package ru.java.bondarmax.lambda;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +9,7 @@ import java.util.stream.Collectors;
 public class Main {
     public static void main(String[] args) {
         // Создаем список людей
-        List<Person> people = Arrays.asList(
+        List<Person> persons = Arrays.asList(
                 new Person("Иван", 25),
                 new Person("Мария", 30),
                 new Person("Петр", 17),
@@ -26,35 +24,35 @@ public class Main {
 
         System.out.println("Исходный список людей:");
 
-        people.forEach(System.out::println);
+        persons.forEach(System.out::println);
 
         // А) Получить список уникальных имен
-        List<String> uniqueNames = people.stream()
-                .map(Person::getName)
+        List<String> uniqueNames = persons.stream()
+                .map(Person::name)
                 .distinct()
                 .toList();
 
         System.out.println("А) Уникальные имена: " + uniqueNames);
 
         // Б) Вывести список уникальных имен в формате: Имена: Иван, Сергей, Петр.
-        String formattedNames = people.stream()
-                .map(Person::getName)
+        String formattedNames = persons.stream()
+                .map(Person::name)
                 .distinct()
                 .collect(Collectors.joining(", ", "Имена: ", "."));
 
         System.out.println("Б) " + formattedNames);
 
         // В) Получить список людей младше 18, посчитать для них средний возраст
-        List<Person> under18 = people.stream()
-                .filter(age -> age.getAge() < 18)
+        List<Person> personsUnder18 = persons.stream()
+                .filter(age -> age.age() < 18)
                 .toList();
 
-        OptionalDouble averageAgeUnder18 = people.stream()
-                .filter(p -> p.getAge() < 18)
-                .mapToInt(Person::getAge)
+        OptionalDouble averageAgeUnder18 = persons.stream()
+                .filter(p -> p.age() < 18)
+                .mapToInt(Person::age)
                 .average();
 
-        System.out.println("В) Люди младше 18: " + under18);
+        System.out.println("В) Люди младше 18: " + personsUnder18);
 
         if (averageAgeUnder18.isPresent()) {
             System.out.println("   Средний возраст: " + averageAgeUnder18);
@@ -63,23 +61,23 @@ public class Main {
         }
 
         // Г) Получить Map: ключи – имена, значения – средний возраст
-        Map<String, Double> nameToAverageAge = people.stream()
+        Map<String, Double> averageAgesByName = persons.stream()
                 .collect(Collectors.groupingBy(
-                        Person::getName,
-                        Collectors.averagingDouble(Person::getAge)
+                        Person::name,
+                        Collectors.averagingInt(Person::age)
                 ));
 
         System.out.println("Г) Map (имя -> средний возраст):");
-        nameToAverageAge.forEach((name, avgAge) ->
-                System.out.println("      " + name + " -> " + avgAge + " лет"));
+        averageAgesByName.forEach((name, averageAge) ->
+                System.out.println("      " + name + " -> " + averageAge + " лет"));
 
         // Д) Получить людей от 20 до 45, вывести имена в порядке убывания возраста
-        List<Person> age20to45 = people.stream()
-                .filter(p -> p.getAge() >= 20 && p.getAge() <= 45)
-                .sorted((p1, p2) -> p2.getAge() - p1.getAge())
+        List<Person> personsBetween20And45 = persons.stream()
+                .filter(p -> p.age() >= 20 && p.age() <= 45)
+                .sorted((p1, p2) -> p2.age() - p1.age())
                 .toList();
 
         System.out.println("Д) Люди от 20 до 45 лет (по убыванию возраста):");
-        age20to45.forEach(p -> System.out.println("   " + p.getName() + " - " + p.getAge() + " лет"));
+        personsBetween20And45.forEach(p -> System.out.println("   " + p.name() + " - " + p.age() + " лет"));
     }
 }
