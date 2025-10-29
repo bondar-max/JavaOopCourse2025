@@ -1,4 +1,4 @@
-package ru.java.bondarmax.squareroots_main;
+package ru.java.bondarmax.squareroots;
 
 import java.util.Scanner;
 import java.util.stream.DoubleStream;
