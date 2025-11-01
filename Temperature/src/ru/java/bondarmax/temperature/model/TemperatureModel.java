@@ -22,4 +22,3 @@ public class TemperatureModel implements TemperatureModelInterface {
         return availableScales;
     }
 }
-

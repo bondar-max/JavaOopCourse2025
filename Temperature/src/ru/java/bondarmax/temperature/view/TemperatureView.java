@@ -1,10 +1,10 @@
 package ru.java.bondarmax.temperature.view;
 
+import ru.java.bondarmax.temperature.controller.TemperatureControllerInterface;
 import ru.java.bondarmax.temperature.scales.TemperatureScaleInterface;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 // Представление
@@ -21,12 +21,127 @@ public class TemperatureView implements TemperatureViewInterface {
         initializeGui();
     }
 
+    /**
+     * Внутренний метод, не должен использоваться контроллером
+     * Получение введенной температуры как числа
+     */
+    public Double getInputTemperatureValue() {
+        String text = temperatureField.getText().trim();
+
+        if (text.isEmpty()) {
+            return null;
+        }
+
+        text = text.replace(',', '.');
+        return Double.parseDouble(text);
+    }
+
+    /**
+     * Внутренний метод, не должен использоваться контроллером
+     * Получение выбранной исходной шкалы
+     */
+    public TemperatureScaleInterface getSourceScale() {
+        return (TemperatureScaleInterface) sourceScaleCombo.getSelectedItem();
+    }
+
+    /**
+     * Внутренний метод, не должен использоваться контроллером
+     * Получение выбранной целевой шкалы
+     */
+    public TemperatureScaleInterface getTargetScale() {
+        return (TemperatureScaleInterface) targetScaleCombo.getSelectedItem();
+    }
+
+    /**
+     * Установка доступных шкал температуры в комбо-боксы
+     */
+    public void setTemperatureScales(List<TemperatureScaleInterface> scales) {
+        TemperatureScaleInterface[] scalesArray = scales.toArray(new TemperatureScaleInterface[0]);
+
+        sourceScaleCombo.setModel(new DefaultComboBoxModel<>(scalesArray));
+        targetScaleCombo.setModel(new DefaultComboBoxModel<>(scalesArray));
+
+        sourceScaleCombo.setSelectedIndex(0);
+        targetScaleCombo.setSelectedIndex(1);
+    }
+
+    /**
+     * Устанавливает контроллер для обработки событий.
+     */
+    @Override
+    public void setController(TemperatureControllerInterface controller) {
+        // Обработчик для кнопки конвертации
+        convertButton.addActionListener(e -> handleConversionRequest(controller));
+
+        // Обработчик для поля ввода (нажатие Enter)
+        temperatureField.addActionListener(e -> handleConversionRequest(controller));
+
+        // Загружаем шкалы температур
+        setTemperatureScales(controller.getAvailableScales());
+    }
+
+    /**
+     * Отображает результат конвертации.
+     * Форматирование числа.
+     */
+    @Override
+    public void displayResult(double result) {
+        resultField.setText(String.format("%.2f", result));
+    }
+
+    /**
+     * Отображает сообщение об ошибке
+     */
+    @Override
+    public void displayError(String error) {
+        errorLabel.setText(error);
+    }
+
+    /**
+     * Очищает поле результата
+     */
+    @Override
+    public void clearResult() {
+        resultField.setText("");
+    }
+
+    /**
+     * Показывает интерфейс пользователя.
+     * Запускается в потоке диспетчера событий Swing
+     */
+    @Override
+    public void show() {
+        SwingUtilities.invokeLater(() -> frame.setVisible(true));
+    }
+
+    /**
+     * Обрабатывает запрос на конвертацию и делегирует контроллеру
+     */
+    private void handleConversionRequest(TemperatureControllerInterface controller) {
+        try {
+            Double inputValue = getInputTemperatureValue();
+
+            if (inputValue != null) {
+                TemperatureScaleInterface fromScale = getSourceScale();
+                TemperatureScaleInterface toScale = getTargetScale();
+                controller.handleConversionRequest(inputValue, fromScale, toScale);
+            } else {
+                displayError("Введите значение температуры");
+                clearResult();
+            }
+        } catch (NumberFormatException e) {
+            displayError("Ошибка: введите корректное число");
+            clearResult();
+        }
+    }
+
     private void initializeGui() {
         // 1. Создание основного окна
         frame = new JFrame("Конвертер температуры");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(310, 240);
         frame.setLocationRelativeTo(null); // Центрирование окна
+        frame.setResizable(false); // Запрет изменения размера
 
         // 2. Установка системного look and feel
         try {
@@ -59,9 +174,9 @@ public class TemperatureView implements TemperatureViewInterface {
 
         convertButton = new JButton("Конвертировать");
 
-        errorLabel = new JLabel("");
+        errorLabel = new JLabel(" ");
         errorLabel.setForeground(Color.RED);
-        errorLabel.setPreferredSize(new Dimension(0, 20));
+        errorLabel.setPreferredSize(new Dimension(0, 20)); // Фиксированная высота
 
         // 6. Сборка inputPanel (компоненты → панель)
         inputPanel.add(temperatureLabel);
@@ -83,65 +198,5 @@ public class TemperatureView implements TemperatureViewInterface {
 
         // 9. Финальная сборка (главная панель → окно)
         frame.add(mainPanel);
-    }
-
-    public void show() {
-        // Запуск в потоке диспетчера событий
-        SwingUtilities.invokeLater(() -> frame.setVisible(true));
-    }
-
-    public void setTemperatureScales(List<TemperatureScaleInterface> scales) {
-        // Создаем разные модели для каждого комбо-бокса
-        DefaultComboBoxModel<TemperatureScaleInterface> sourceModel = new DefaultComboBoxModel<>();
-        DefaultComboBoxModel<TemperatureScaleInterface> targetModel = new DefaultComboBoxModel<>();
-
-        for (TemperatureScaleInterface scale : scales) {
-            sourceModel.addElement(scale);
-            targetModel.addElement(scale);
-        }
-
-        sourceScaleCombo.setModel(sourceModel);
-        sourceScaleCombo.setSelectedIndex(0); // Цельсий
-
-        targetScaleCombo.setModel(targetModel);
-        targetScaleCombo.setSelectedIndex(1); // Фаренгейт
-    }
-
-    public void setConvertButtonListener(ActionListener listener) {
-        convertButton.addActionListener(listener);
-    }
-
-    public void setTemperatureFieldListener(ActionListener listener) {
-        temperatureField.addActionListener(listener);
-    }
-
-    public void clearResult() {
-        resultField.setText(""); // очищаем поле
-    }
-
-    public void setError(String error) {
-        errorLabel.setText(error);
-    }
-
-    public TemperatureScaleInterface getSourceScale() {
-        return (TemperatureScaleInterface) sourceScaleCombo.getSelectedItem();
-    }
-
-    public TemperatureScaleInterface getTargetScale() {
-        return (TemperatureScaleInterface) targetScaleCombo.getSelectedItem();
-    }
-
-    public Double getInputTemperatureValue() {
-        String text = temperatureField.getText().trim();
-
-        if (text.isEmpty()) {
-            return null;
-        }
-
-        return Double.parseDouble(text);
-    }
-
-    public void setResult(double result) {
-        resultField.setText(String.format("%.2f", result));
     }
 }

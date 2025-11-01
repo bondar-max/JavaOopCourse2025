@@ -4,8 +4,10 @@ import ru.java.bondarmax.temperature.model.TemperatureModelInterface;
 import ru.java.bondarmax.temperature.scales.TemperatureScaleInterface;
 import ru.java.bondarmax.temperature.view.TemperatureViewInterface;
 
+import java.util.List;
+
 // Контроллер
-public class TemperatureController {
+public class TemperatureController implements TemperatureControllerInterface {
     private final TemperatureModelInterface model;
     private final TemperatureViewInterface view;
 
@@ -13,41 +15,22 @@ public class TemperatureController {
         this.model = model;
         this.view = view;
 
-        // Устанавливаем шкалы в view
-        view.setTemperatureScales(model.getAvailableScales());
-
-        // Регистрация обработчиков событий
-        setupEventHandlers();
+        view.setController(this); // связываем
     }
-
-    private void setupEventHandlers() {
-        // Обработчик для кнопки конвертации
-        view.setConvertButtonListener(e -> convertTemperature());
-        // Обработка нажатия Enter в поле ввода
-        view.setTemperatureFieldListener(e -> convertTemperature());
-    }
-
-    private void convertTemperature() {
+    
+    public void handleConversionRequest(double value, TemperatureScaleInterface from, TemperatureScaleInterface to) {
         try {
-            // Получение введенных данных
-            Double inputValue = view.getInputTemperatureValue();
+            double result = model.convertTemperature(value, from, to);
 
-            if (inputValue == null) {
-                view.setError("Введите значение температуры");
-                return;
-            }
-
-            TemperatureScaleInterface fromScale = view.getSourceScale();
-            TemperatureScaleInterface toScale = view.getTargetScale();
-
-            double result = model.convertTemperature(inputValue, fromScale, toScale);
-
-            view.setResult(result);
-            view.setError("");
-        } catch (NumberFormatException e) {
-            view.setError("Ошибка: введите корректное число");
+            view.displayResult(result);
+            view.displayError("");
+        } catch (Exception e) {
+            view.displayError("Ошибка конвертации");
             view.clearResult();
         }
     }
-}
 
+    public List<TemperatureScaleInterface> getAvailableScales() {
+        return model.getAvailableScales();
+    }
+}
